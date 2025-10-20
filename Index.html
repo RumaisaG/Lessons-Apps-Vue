@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - After School Activities</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <div id="app">
+        <!-- Sidebar Menu -->
+        <div class="sidebar-menu" id="sidebarMenu">
+            <button class="sidebar-close" @click="closeSidebar">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="navbar-brand mb-4">
+                <i class="fas fa-graduation-cap"></i> Ru Academy
+            </div>
+            <div class="sidebar-links">
+                <a href="#home" class="sidebar-link" @click="currentPage = 'home'; closeSidebar()">
+                    <i class="fas fa-home me-2"></i> Home
+                </a>
+                <a href="#activities" class="sidebar-link" @click="currentPage = 'activities'; closeSidebar()">
+                    <i class="fas fa-th-large me-2"></i> Activities
+                </a>
+                <a href="#about" class="sidebar-link">
+                    <i class="fas fa-info-circle me-2"></i> About
+                </a>
+                <a href="#contact" class="sidebar-link">
+                    <i class="fas fa-envelope me-2"></i> Contact
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="mobile-menu-btn" @click="openSidebar">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="#" class="navbar-brand" @click="currentPage = 'home'">
+                            <i class="fas fa-graduation-cap"></i> Ru Academy
+                        </a>
+                    </div>
+                    
+                    <div class="desktop-nav d-none d-lg-flex gap-3">
+                        <a href="#home" class="nav-link" @click="currentPage = 'home'">Home</a>
+                        <a href="#activities" class="nav-link" @click="currentPage = 'activities'">Activities</a>
+                        <a href="#about" class="nav-link">About</a>
+                        <a href="#contact" class="nav-link">Contact</a>
+                    </div>
+
+                    <div class="d-none d-md-block flex-grow-1 mx-4" style="max-width: 500px;">
+                        <div class="navbar-search">
+                            <input 
+                                type="text" 
+                                placeholder="Search activities..."
+                                v-model="searchQuery"
+                                @keyup.enter="searchActivities"
+                            >
+                            <button @click="searchActivities">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="icon-btn" @click="currentPage = 'cart'">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge-custom" v-if="cartItems > 0">{{ cartItems }}</span>
+                        </div>
+                        <div class="icon-btn" @click="currentPage = 'profile'">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Search -->
+                <div class="d-md-none mt-3">
+                    <div class="navbar-search">
+                        <input 
+                            type="text" 
+                            placeholder="Search activities..."
+                            v-model="searchQuery"
+                            @keyup.enter="searchActivities"
+                        >
+                        <button @click="searchActivities">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home Page -->
+        <div v-if="currentPage === 'home'">
+            <!-- Hero Section with Slideshow -->
+            <div class="hero-section">
+                <div class="hero-slide" :class="{ active: currentSlide === 0 }" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1600&h=900&fit=crop');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Discover Your Passion</h1>
+                            <p class="hero-subtitle fade-in-up">Join thousands of students learning new skills every day</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Explore Activities</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" :class="{ active: currentSlide === 1 }" style="background-image: url('https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=1600&h=900&fit=crop');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Expert Instructors</h1>
+                            <p class="hero-subtitle fade-in-up">Learn from the best in a supportive environment</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Browse Classes</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" :class="{ active: currentSlide === 2 }" style="background-image: url('https://images.unsplash.com/photo-1529390079861-591de354faf5?w=1600&h=900&fit=crop');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Build Your Future</h1>
+                            <p class="hero-subtitle fade-in-up">Develop skills that will last a lifetime</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Get Started</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-dots">
+                    <div class="hero-dot" :class="{ active: currentSlide === 0 }" @click="currentSlide = 0"></div>
+                    <div class="hero-dot" :class="{ active: currentSlide === 1 }" @click="currentSlide = 1"></div>
+                    <div class="hero-dot" :class="{ active: currentSlide === 2 }" @click="currentSlide = 2"></div>
+                </div>
+            </div>
+
+            <div class="container my-4">
+                <!-- Category Pills -->
+                <div class="category-pills">
+                    <div class="category-pill" :class="{ active: selectedCategory === 'all' }" @click="filterByCategory('all')">
+                        <i class="fas fa-th"></i> All
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'sports' }" @click="filterByCategory('sports')">
+                        <i class="fas fa-basketball-ball"></i> Sports
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'music' }" @click="filterByCategory('music')">
+                        <i class="fas fa-music"></i> Music
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'art' }" @click="filterByCategory('art')">
+                        <i class="fas fa-palette"></i> Art & Craft
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'stem' }" @click="filterByCategory('stem')">
+                        <i class="fas fa-robot"></i> STEM
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'language' }" @click="filterByCategory('language')">
+                        <i class="fas fa-language"></i> Languages
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'dance' }" @click="filterByCategory('dance')">
+                        <i class="fas fa-drum"></i> Dance
+                    </div>
+                </div>
+
+                <!-- Featured Activities -->
+                <div class="mb-5">
+                    <h2 class="mb-4">Featured Activities</h2>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 col-sm-6" v-for="(activity, index) in featuredActivities" :key="index">
+                            <div class="product-card fade-in-up" :style="{ animationDelay: index * 0.1 + 's' }">
+                                <div class="product-image-container">
+                                    <img :src="activity.image" :alt="activity.name" class="product-image">
+                                    <div class="product-badge" v-if="activity.badge">{{ activity.badge }}</div>
+                                    <div class="product-favorite" @click.stop="toggleFavorite(activity)">
+                                        <i :class="activity.favorite ? 'fas fa-heart' : 'far fa-heart'" :style="activity.favorite ? 'color: var(--primary)' : ''"></i>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title">{{ activity.name }}</h5>
+                                    <div class="product-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ activity.location }}
+                                    </div>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i v-for="n in 5" :key="n" :class="n <= activity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                                        </div>
+                                        <span class="rating-count">({{ activity.reviews }})</span>
+                                    </div>
+                                    <div class="product-price-row">
+                                        <div>
+                                            <span class="product-price">${{ activity.price }}</span>
+                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                        </div>
+                                        <span class="product-stock">{{ activity.spots }} spots</span>
+                                    </div>
+                                    <button class="add-to-cart-btn" @click="viewActivity(activity)">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <script>
+       
+
+        new Vue({
+            el: '#app',
+            data: {
+                currentPage: 'home',
+                isDarkMode: false,
+                searchQuery: '',
+                selectedCategory: 'all',
+                cartItems: 0,
+                sortBy: 'featured',
+                currentSlide: 0,
+                selectedImage: '',
+                reviewRating: 0,
+                reviewText: '',
+                
+                // Filters
+                filters: {
+                    categories: [],
+                    locations: [],
+                    minPrice: 0,
+                    maxPrice: 200,
+                    availability: 'all',
+                    ageGroups: []
+                },
+                
+                // Filter Options
+                categories: [
+                    { value: 'sports', label: 'Sports' },
+                    { value: 'music', label: 'Music' },
+                    { value: 'art', label: 'Art & Craft' },
+                    { value: 'stem', label: 'STEM' },
+                    { value: 'language', label: 'Languages' },
+                    { value: 'dance', label: 'Dance' }
+                ],
+                
+                locations: [
+                    'Downtown', 'Midtown', 'Uptown', 'Suburbs', 'Online'
+                ],
+                
+                ageGroups: [
+                    '5-7 years', '8-10 years', '11-13 years', '14+ years'
+                ],
+                
+                // Featured Activities
+                featuredActivities: [
+                    {
+                        id: 1,
+                        name: 'Basketball Training',
+                        category: 'sports',
+                        location: 'Downtown',
+                        price: 99.99,
+                        oldPrice: 129.99,
+                        rating: 5,
+                        reviews: 248,
+                        spots: 12,
+                        badge: 'Popular',
+                        image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop',
+                        favorite: false
+                    },
+                    {
+                        id: 2,
+                        name: 'Piano Lessons',
+                        category: 'music',
+                        location: 'Midtown',
+                        price: 89.99,
+                        oldPrice: null,
+                        rating: 5,
+                        reviews: 192,
+                        spots: 8,
+                        badge: 'New',
+                        image: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=400&h=300&fit=crop',
+                        favorite: false
+                    },
+                    {
+                        id: 3,
+                        name: 'Painting Workshop',
+                        category: 'art',
+                        location: 'Uptown',
+                        price: 75.00,
+                        oldPrice: 95.00,
+                        rating: 4,
+                        reviews: 156,
+                        spots: 15,
+                        badge: '20% Off',
+                        image: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=300&fit=crop',
+                        favorite: false
+                    },
+                    {
+                        id: 4,
+                        name: 'Coding for Kids',
+                        category: 'stem',
+                        location: 'Online',
+                        price: 110.00,
+                        oldPrice: null,
+                        rating: 5,
+                        reviews: 312,
+                        spots: 20,
+                        badge: 'Best Seller',
+                        image: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=400&h=300&fit=crop',
+                        favorite: false
+                    },
+                    {
+                        id: 5,
+                        name: 'Spanish Classes',
+                        category: 'language',
+                        location: 'Downtown',
+                        price: 85.00,
+                        oldPrice: null,
+                        rating: 4,
+                        reviews: 128,
+                        spots: 10,
+                        badge: null,
+                        image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop',
+                        favorite: false
+                    },
+                    {
+                        id: 6,
+                        name: 'Ballet Dance',
+                        category: 'dance',
+                        location: 'Midtown',
+                        price: 95.00,
+                        oldPrice: 120.00,
+                        rating: 5,
+                        reviews: 203,
+                        spots: 6,
+                        badge: 'Limited',
+                        image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=300&fit=crop',
+                        favorite: false
+                    },
+                    {
+                        id: 7,
+                        name: 'Soccer Training',
+                        category: 'sports',
+                        location: 'Suburbs',
+                        price: 79.99,
+                        oldPrice: null,
+                        rating: 4,
+                        reviews: 167,
+                        spots: 18,
+                        badge: null,
+                        image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=300&fit=crop',
+                        favorite: false
+                    },
+                    {
+                        id: 8,
+                        name: 'Guitar Lessons',
+                        category: 'music',
+                        location: 'Downtown',
+                        price: 92.00,
+                        oldPrice: null,
+                        rating: 5,
+                        reviews: 221,
+                        spots: 9,
+                        badge: 'Popular',
+                        image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&h=300&fit=crop',
+                        favorite: false
+                    }
+                ],
+                
+                activityImages: [],
+                
+                // Cart
+                cart: [],
+                
+                // Checkout
+                checkout: {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    paymentMethod: 'card',
+                    tip: 0
+                },
+                
+                // Selected Activity
+                selectedActivity: null,
+                
+                
+            },
+            
+            computed: {
+                filteredActivities() {
+                    let activities = [...this.featuredActivities];
+                    
+                    if (this.filters.categories.length > 0) {
+                        activities = activities.filter(a => this.filters.categories.includes(a.category));
+                    }
+                    
+                    if (this.filters.locations.length > 0) {
+                        activities = activities.filter(a => this.filters.locations.includes(a.location));
+                    }
+                    
+                    activities = activities.filter(a => {
+                        return a.price >= this.filters.minPrice && a.price <= this.filters.maxPrice;
+                    });
+                    
+                    return activities;
+                },
+                
+                sortedActivities() {
+                    let activities = [...this.filteredActivities];
+                    
+                    switch(this.sortBy) {
+                        case 'price-asc':
+                            return activities.sort((a, b) => a.price - b.price);
+                        case 'price-desc':
+                            return activities.sort((a, b) => b.price - a.price);
+                        case 'rating':
+                            return activities.sort((a, b) => b.rating - a.rating);
+                        case 'popular':
+                            return activities.sort((a, b) => b.reviews - a.reviews);
+                        default:
+                            return activities;
+                    }
+                },
+                
+             
+            },
+            
+            methods: {
+                toggleTheme() {
+                    this.isDarkMode = !this.isDarkMode;
+                    document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
+                },
+                
+                openSidebar() {
+                    document.getElementById('sidebarMenu').classList.add('active');
+                    document.getElementById('sidebarOverlay').classList.add('active');
+                },
+                
+                closeSidebar() {
+                    document.getElementById('sidebarMenu').classList.remove('active');
+                    document.getElementById('sidebarOverlay').classList.remove('active');
+                },
+                
+                filterByCategory(category) {
+                    this.selectedCategory = category;
+                    if (category === 'all') {
+                        this.filters.categories = [];
+                    } else {
+                        this.filters.categories = [category];
+                    }
+                    this.currentPage = 'activities';
+                },
+                
+                searchActivities() {
+                    if (this.searchQuery.trim()) {
+                        this.currentPage = 'search';
+                    }
+                },
+                
+                resetFilters() {
+                    this.filters = {
+                        categories: [],
+                        locations: [],
+                        minPrice: 0,
+                        maxPrice: 200,
+                        availability: 'all',
+                        ageGroups: []
+                    };
+                },
+                
+                addToCart(activity) {
+                    const existingItem = this.cart.find(item => item.id === activity.id);
+                    if (existingItem) {
+                        existingItem.quantity++;
+                    } else {
+                        this.cart.push({
+                            ...activity,
+                            quantity: 1
+                        });
+                    }
+                    this.cartItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                    
+                    alert('Activity added to cart!');
+                },
+                
+                removeFromCart(index) {
+                    this.cart.splice(index, 1);
+                    this.cartItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                },
+                
+                increaseQuantity(index) {
+                    this.cart[index].quantity++;
+                    this.cartItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                },
+                
+                decreaseQuantity(index) {
+                    if (this.cart[index].quantity > 1) {
+                        this.cart[index].quantity--;
+                        this.cartItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                    }
+                },
+                
+                toggleFavorite(activity) {
+                    activity.favorite = !activity.favorite;
+                },
+                
+                viewActivity(activity) {
+                    this.selectedActivity = activity;
+                    this.activityImages = [
+                        activity.image,
+                        'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&h=500&fit=crop',
+                        'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500&h=500&fit=crop',
+                        'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=500&h=500&fit=crop'
+                    ];
+                    this.selectedImage = this.activityImages[0];
+                    this.currentPage = 'activity-detail';
+                    window.scrollTo(0, 0);
+                },
+                
+               
+            },
+            
+            mounted() {
+                // Hero slideshow
+                setInterval(() => {
+                    this.currentSlide = (this.currentSlide + 1) % 3;
+                }, 5000);
+                
+                // Close sidebar when clicking overlay
+                document.getElementById('sidebarOverlay').addEventListener('click', () => {
+                    this.closeSidebar();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
