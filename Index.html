@@ -206,6 +206,186 @@
             </div>
         </div>
 
+          <!-- Search Results Page -->
+        <div v-if="currentPage === 'activities' || currentPage === 'search'" class="container my-4">
+            <div class="row">
+                <!-- Filter Sidebar -->
+                <div class="col-lg-3">
+                    <div class="filter-sidebar">
+                        <div class="filter-title">
+                            <span>Filters</span>
+                            <span class="filter-reset" @click="resetFilters">Reset</span>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Category</div>
+                            <div class="filter-option" v-for="category in categories" :key="category.value">
+                                <input type="checkbox" :id="category.value" v-model="filters.categories" :value="category.value">
+                                <label :for="category.value">{{ category.label }}</label>
+                            </div>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Location</div>
+                            <div class="filter-option" v-for="location in locations" :key="location">
+                                <input type="checkbox" :id="location" v-model="filters.locations" :value="location">
+                                <label :for="location">{{ location }}</label>
+                            </div>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Price Range</div>
+                            <div class="price-range">
+                                <input type="range" class="form-range" min="0" max="200" v-model="filters.maxPrice">
+                                <div class="price-inputs">
+                                    <input type="number" class="price-input" placeholder="Min" v-model="filters.minPrice">
+                                    <input type="number" class="price-input" placeholder="Max" v-model="filters.maxPrice">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Availability Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Availability</div>
+                            <div class="filter-option">
+                                <input type="radio" name="availability" id="all-days" value="all" v-model="filters.availability">
+                                <label for="all-days">All Days</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="radio" name="availability" id="weekdays" value="weekdays" v-model="filters.availability">
+                                <label for="weekdays">Weekdays</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="radio" name="availability" id="weekends" value="weekends" v-model="filters.availability">
+                                <label for="weekends">Weekends</label>
+                            </div>
+                        </div>
+
+                        <!-- Age Group -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Age Group</div>
+                            <div class="filter-option" v-for="age in ageGroups" :key="age">
+                                <input type="checkbox" :id="age" v-model="filters.ageGroups" :value="age">
+                                <label :for="age">{{ age }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activities Grid -->
+                <div class="col-lg-9">
+                    <!-- Sort and Results Count -->
+                    <div class="sort-container">
+                        <span class="text-secondary">{{ filteredActivities.length }} results</span>
+                        <select class="sort-select" v-model="sortBy">
+                            <option value="featured">Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="newest">Newest First</option>
+                            <option value="popular">Most Popular</option>
+                        </select>
+                    </div>
+
+                    <!-- Activities Grid -->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6" v-for="(activity, index) in sortedActivities" :key="index">
+                            <div class="product-card" @click="viewActivity(activity)">
+                                <div class="product-image-container">
+                                    <img :src="activity.image" :alt="activity.name" class="product-image">
+                                    <div class="product-badge" v-if="activity.badge">{{ activity.badge }}</div>
+                                    <div class="product-favorite" @click.stop="toggleFavorite(activity)">
+                                        <i :class="activity.favorite ? 'fas fa-heart' : 'far fa-heart'" :style="activity.favorite ? 'color: var(--primary)' : ''"></i>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title">{{ activity.name }}</h5>
+                                    <div class="product-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ activity.location }}
+                                    </div>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i v-for="n in 5" :key="n" :class="n <= activity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                                        </div>
+                                        <span class="rating-count">({{ activity.reviews }})</span>
+                                    </div>
+                                    <div class="product-price-row">
+                                        <div>
+                                            <span class="product-price">${{ activity.price }}</span>
+                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                        </div>
+                                        <span class="product-stock">{{ activity.spots }} spots</span>
+                                    </div>
+                                    <button class="add-to-cart-btn" @click.stop="addToCart(activity)">
+                                        <i class="fas fa-shopping-cart"></i> Enroll Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+                <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-section">
+                            <div class="navbar-brand mb-3">
+                                <i class="fas fa-graduation-cap"></i> Ru Acadmemy 
+                            </div>
+                            <p class="text-secondary">Empowering students with quality after-school education and activities. Join thousands of learners discovering their passion.</p>
+                            <div class="social-icons">
+                                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-title">Quick Links</div>
+                            <a href="#" class="footer-link">About Us</a>
+                            <a href="#" class="footer-link">Activities</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-title">Support</div>
+                            <a href="#" class="footer-link">Contact Us</a>
+                            <a href="#" class="footer-link">FAQs</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-title">Newsletter</div>
+                            <p class="text-secondary">Subscribe to get updates on new activities and special offers!</p>
+                            <div class="navbar-search">
+                                <input type="email" placeholder="Your email...">
+                                <button>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; RU Academy. Made with <i class="fas fa-heart" style="color: var(--primary);"></i> for students everywhere.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" @click="toggleTheme">
+            <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+        </button>
       
     </div>
 
