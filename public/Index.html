@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RU Academy - After School Activities</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Jersey+10&family=Nova+Square&family=Pixelify+Sans:wght@400..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+    </style>
+</head>
+<body>
+   
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <div id="app">
+        <!-- Sidebar Menu -->
+        <div class="sidebar-menu" id="sidebarMenu">
+            <button class="sidebar-close" @click="closeSidebar">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="navbar-brand mb-4">
+                <i class="fas fa-graduation-cap"></i> RU Academy
+            </div>
+            <div class="sidebar-links">
+                <a href="#home" class="sidebar-link" @click="currentPage = 'home'; closeSidebar()">
+                    <i class="fas fa-home me-2"></i> Home
+                </a>
+                <a href="#activities" class="sidebar-link" @click="currentPage = 'activities'; closeSidebar()">
+                    <i class="fas fa-th-large me-2"></i> Activities
+                </a>
+                <a href="#about" class="sidebar-link">
+                    <i class="fas fa-info-circle me-2"></i> About
+                </a>
+                <a href="#contact" class="sidebar-link">
+                    <i class="fas fa-envelope me-2"></i> Contact
+                </a>
+            </div>
+        </div>
+
+        <!-- The navbar -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="mobile-menu-btn" @click="openSidebar">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="#" class="navbar-brand" @click="currentPage = 'home'">
+                            <i class="fas fa-graduation-cap"></i> RU Academy
+                        </a>
+                    </div>
+                    
+                    <div class="desktop-nav d-none d-lg-flex gap-3">
+                        <a href="#home" class="nav-link" @click="currentPage = 'home'">Home</a>
+                        <a href="#activities" class="nav-link" @click="currentPage = 'activities'">Activities</a>
+                        <a href="#about" class="nav-link">About</a>
+                        <a href="#contact" class="nav-link">Contact</a>
+                    </div>
+
+                    <div class="d-none d-md-block flex-grow-1 mx-4" style="max-width: 500px;">
+                        <div class="navbar-search">
+                            <input 
+                                type="text" 
+                                placeholder="Search activities..."
+                                v-model="searchQuery"
+                                @keyup.enter="searchActivities"
+                            >
+                            <button @click="searchActivities">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <button class="icon-btn" 
+                                @click="currentPage = (currentPage === 'cart' && cartItems > 0) ? 'home' : 'cart'" 
+                                :disabled="cartItems === 0">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge-custom" v-if="cartItems > 0">{{ cartItems }}</span>
+                        </button>
+                        <button class="icon-btn" @click="currentPage = 'profile'">
+                            <i class="fas fa-user"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Search -->
+                <div class="d-md-none mt-3">
+                    <div class="navbar-search">
+                        <input 
+                            type="text" 
+                            placeholder="Search activities..."
+                            v-model="searchQuery"
+                            @keyup.enter="searchActivities"
+                        >
+                        <button @click="searchActivities">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home Page -->
+        <div v-if="currentPage === 'home'">
+           
+            <div class="hero-section">
+                <div class="hero-slide" :class="{ active: currentSlide === 0 }" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1600&h=900&fit=crop');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Discover Your Passion</h1>
+                            <p class="hero-subtitle fade-in-up">Join thousands of students learning new skills every day</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Explore Activities</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" :class="{ active: currentSlide === 1 }" style="background-image: url('https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=1600&h=900&fit=crop');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Expert Instructors</h1>
+                            <p class="hero-subtitle fade-in-up">Learn from the best in a supportive environment</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Browse Classes</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" :class="{ active: currentSlide === 2 }" style="background-image: url('https://images.unsplash.com/photo-1529390079861-591de354faf5?w=1600&h=900&fit=crop');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Build Your Future</h1>
+                            <p class="hero-subtitle fade-in-up">Develop skills that will last a lifetime</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Get Started</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-dots">
+                    <div class="hero-dot" :class="{ active: currentSlide === 0 }" @click="currentSlide = 0"></div>
+                    <div class="hero-dot" :class="{ active: currentSlide === 1 }" @click="currentSlide = 1"></div>
+                    <div class="hero-dot" :class="{ active: currentSlide === 2 }" @click="currentSlide = 2"></div>
+                </div>
+            </div>
+
+            <div class="container my-4">
+               
+                <div class="category-pills">
+                    <div class="category-pill" :class="{ active: selectedCategory === 'all' }" @click="filterByCategory('all')">
+                        <i class="fas fa-th"></i> All
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Sports & Games' }" @click="filterByCategory('Sports & Games')">
+                        <i class="fas fa-basketball-ball"></i> Sports
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Music' }" @click="filterByCategory('Music')">
+                        <i class="fas fa-music"></i> Music
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Art & Craft' }" @click="filterByCategory('Art & Craft')">
+                        <i class="fas fa-palette"></i> Art & Craft
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'STEM' }" @click="filterByCategory('STEM')">
+                        <i class="fas fa-robot"></i> STEM
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Languages' }" @click="filterByCategory('Languages')">
+                        <i class="fas fa-language"></i> Languages
+                    </div>
+                </div>
+
+                <!-- Featured Activities -->
+                <div class="mb-5">
+                    <h2 class="mb-4">Featured Activities</h2>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-5 col-sm-6" v-for="(activity, index) in Activities" :key="index">
+                            <div class="product-card fade-in-up" :style="{ animationDelay: index * 0.1 + 's' }" @click="viewActivity(activity)">
+                                <div class="product-image-container">
+                                    <img :src="activity.imageUrl[0]" :alt="activity.topic" class="product-image" >
+                                    <div class="product-badge" v-if="activity.badge">{{ activity.badge }}</div>
+                                    <div class="product-favorite" @click.stop="toggleFavorite(activity)">
+                                        <i :class="activity.favorite ? 'fas fa-heart' : 'far fa-heart'" :style="activity.favorite ? 'color: var(--primary)' : ''"></i>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title">{{ activity.topic }}</h5>
+                                    <div class="product-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ activity.location }}
+                                    </div>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i v-for="n in 5" :key="n" :class="n <= activity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                                        </div>
+                                        <span class="rating-count">({{ activity.rating }})</span>
+                                    </div>
+                                    <div class="product-price-row">
+                                        <div>
+                                            <span class="product-price">${{ activity.price }}</span>
+                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                        </div>
+                                        <span class="product-stock">{{ activity.spaces }} spots</span>
+                                    </div>
+                                    <button class="add-to-cart-btn" @click="viewActivity(activity)">
+                                        <i class="fas fa-eye"></i> View Activity
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activities/Search Results Page -->
+        <div v-if="currentPage === 'activities' || currentPage === 'search'" class="container my-4">
+            <div class="row">
+                <!-- Filter Sidebar -->
+                <div class="col-lg-3">
+                    <div class="filter-sidebar">
+                        <div class="filter-title">
+                            <span>Filters</span>
+                            <span class="filter-reset" @click="resetFilters">Reset</span>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Category</div>
+                            <div class="filter-option" v-for="category in categories" :key="category.value">
+                                <input type="checkbox" :id="category.value" v-model="filters.categories" :value="category.value">
+                                <label :for="category.value">{{ category.label }}</label>
+                            </div>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Location</div>
+                            <div class="filter-option" v-for="location in locations" :key="location">
+                                <input type="checkbox" :id="location" v-model="filters.locations" :value="location">
+                                <label :for="location">{{ location }}</label>
+                            </div>
+                        </div>
+
+                        <!-- Seats Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Number of Seats</div>
+                            <div class="price-range">
+                                <input type="range" class="form-range" min="80" v-model="filters.minSpaces">
+                                <div class="price-inputs">
+                                    <input type="number" class="price-input" placeholder="Minimum Seats" v-model="filters.minSpaces">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Price Range</div>
+                            <div class="price-range">
+                                <input type="range" class="form-range" min="0" max="300" v-model="filters.maxPrice">
+                                <div class="price-inputs">
+                                    <input type="number" class="price-input" placeholder="Min" v-model="filters.minPrice">
+                                    <input type="number" class="price-input" placeholder="Max" v-model="filters.maxPrice">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Availability Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Days</div>
+                            <div class="filter-option" v-for="dayOption in days" :key="dayOption.label">
+                                <input 
+                                    type="radio" 
+                                    :id="'days-' + dayOption.label" 
+                                    v-model="filters.selectedDays" 
+                                    :value="dayOption.label" 
+                                    name="days-filter"
+                                >
+                                <label :for="'days-' + dayOption.label">{{ dayOption.label }}</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Activities Grid -->
+                <div class="col-lg-9">
+                  
+                    <div class="sort-container">
+                        <span class="text-secondary">{{ filteredActivities.length }} results</span>
+                        <select class="sort-select" v-model="sortBy">
+                            <option value="featured">Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating">Highest Rated</option>
+                        </select>
+                    </div>
+
+                    <!-- Activities Grid -->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6" v-for="(activity, index) in sortedActivities" :key="index">
+                            <div class="product-card" @click="viewActivity(activity)">
+                                <div class="product-image-container">
+                                    <img :src="activity.imageUrl[0]" :alt="activity.topic" class="product-image">
+                                    <div class="product-badge" v-if="activity.badge">{{ activity.badge }}</div>
+                                    <div class="product-favorite" @click.stop="toggleFavorite(activity)">
+                                        <i :class="activity.favorite ? 'fas fa-heart' : 'far fa-heart'" :style="activity.favorite ? 'color: var(--primary)' : ''"></i>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title">{{ activity.topic }}</h5>
+                                    <div class="product-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ activity.location }}
+                                    </div>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i v-for="n in 5" :key="n" :class="n <= activity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                                        </div>
+                                        <span class="rating-count">({{ activity.rating }})</span>
+                                    </div>
+                                    <div class="product-price-row">
+                                        <div>
+                                            <span class="product-price">${{ activity.price }}</span>
+                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                        </div>
+                                        <span class="product-stock">{{ activity.spaces }} spots</span>
+                                    </div>
+                                    <button class="add-to-cart-btn" @click.stop="addToCart(activity)" :disabled="activity.spaces === 0" :class="{ 'disabled-btn': activity.spaces === 0 }">
+                                        <i class="fas fa-shopping-cart"></i> {{ activity.spaces === 0 ? 'No Seats Available' : 'Enroll Now' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Individual Activity Page -->
+        <div v-if="currentPage === 'activity-detail'" class="container my-5">
+            <button class="btn btn-outline-secondary mb-4" @click="currentPage = 'activities'">
+                <i class="fas fa-arrow-left"></i> Back to Activities
+            </button>
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="image-gallery">
+                        <div class="gallery-main">
+                            <img :src="selectedImage" alt="Activity">
+                        </div>
+                    </div>
+                    <div class="gallery-thumbnails">
+                            <div class="thumbnail" :class="{ active: selectedImage === image }" v-for="(image, index) in activityImages" :key="index" @click="selectedImage = image">
+                                <img :src="image" alt="Thumbnail">
+                            </div>
+                        </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="profile-section">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="product-badge">{{ selectedActivity.badge }}</span>
+                            <div class="product-favorite" @click="toggleFavorite(selectedActivity)" style="position: relative;">
+                                <i :class="selectedActivity.favorite ? 'fas fa-heart' : 'far fa-heart'" :style="selectedActivity.favorite ? 'color: var(--primary)' : ''"></i>
+                            </div>
+                        </div>
+                        <h1 class="mb-3">{{ selectedActivity.topic }}</h1>
+                        <div class="product-location mb-3" style="font-size: 1.1rem;">
+                            <i class="fas fa-map-marker-alt"></i> {{ selectedActivity.location }}
+                        </div>
+                        <div class="product-rating mb-4">
+                            <div class="stars" style="font-size: 1.2rem;">
+                                <i v-for="n in 5" :key="n" :class="n <= selectedActivity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                            </div>
+                            <span class="rating-count" style="font-size: 1rem;">({{ selectedActivity.rating }} reviews)</span>
+                        </div>
+                        <div class="mb-4">
+                            <span class="product-price" style="font-size: 2.5rem;">${{ selectedActivity.price }}</span>
+                            <span class="product-price-old" style="font-size: 1.5rem;" v-if="selectedActivity.oldPrice">${{ selectedActivity.oldPrice }}</span>
+                            <span class="text-secondary ms-2">/session</span>
+                        </div>
+                        <div class="mb-4">
+                            <span class="badge bg-success px-3 py-2" style="background-color: #10B981 !important;">
+                                <i class="fas fa-check-circle"></i> {{ selectedActivity.spaces }} spots available
+                            </span>
+                        </div>
+                        <button class="add-to-cart-btn mb-4" style="font-size: 1.2rem; padding: 1.25rem;" @click="addToCart(selectedActivity)">
+                            <i class="fas fa-shopping-cart"></i> Enroll Now
+                        </button>
+                        
+                        <div class="section-title mt-5">About This Activity</div>
+                        <p class="text-secondary">{{ selectedActivity.description }}</p>
+                        
+                        <div class="section-title mt-4">What's Included</div>
+                        <ul class="text-secondary">
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>Professional instruction</li>
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>All necessary equipment</li>
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>Progress tracking</li>
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>Certificate upon completion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="profile-section mt-5">
+                <div class="section-title">Customer Reviews</div>
+                <div class="mb-4">
+                    <h3 class="d-inline me-3">{{selectedActivity.rating}}</h3>
+                    <div class="stars d-inline">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="text-secondary ms-2">({{ selectedActivity.reviews.length }} reviews)</span>
+                </div>
+                
+                <div v-for="review in sampleReviews" :key="review.id" class="mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
+                    <div class="d-flex align-items-center mb-2">
+                        <img :src="review.avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 1rem;">
+                        <div>
+                            <div class="fw-bold">{{ review.name }}</div>
+                            <div class="stars" style="font-size: 0.875rem;">
+                                <i v-for="n in review.rating" :key="n" class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-0">{{ review.comment }}</p>
+                </div>
+            </div>
+
+            <!-- Add Review Form -->
+            <div class="review-form">
+                <div class="section-title">Write a Review</div>
+                <div class="form-group">
+                    <label class="form-label">Your Rating</label>
+                    <div class="star-rating">
+                        <i v-for="n in 5" :key="n" class="fas fa-star" :class="{ active: n <= reviewRating }" @click="reviewRating = n"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Your Review</label>
+                    <textarea class="form-input" rows="4" placeholder="Share your experience..." v-model="reviewText"></textarea>
+                </div>
+                <button class="submit-btn" @click="submitReview">Submit Review</button>
+            </div>
+        </div>
+
+        <!-- Cart Page -->
+        <div v-if="currentPage === 'cart'" class="container my-5">
+            <h2 class="mb-4">Shopping Cart ({{ cart.length }} items)</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div v-if="cart.length === 0" class="text-center py-5">
+                        <i class="fas fa-shopping-cart" style="font-size: 1.9rem; color: var(--text-secondary);"></i>
+                        <h3 class="mt-4">Your cart is currently empty</h3>
+                        <p class="text-secondary">Start adding some activities</p>
+                        <button class="checkout-btn" style="max-width: 300px;" @click="currentPage = 'home'">
+                            Browse Activities
+                        </button>
+                    </div>
+                    
+                    <div v-for="(item, index) in cart" :key="item.index" class="cart-item">
+                        <img :src="item.imageUrl[0]" :alt="item.topic" class="cart-item-image">
+                        <div class="cart-item-details">
+                            <h5 class="mb-2">{{ item.topic }}</h5>
+                            <div class="product-location mb-2">
+                                <i class="fas fa-map-marker-alt"></i> {{ item.location }}
+                            </div>
+                            <div class="product-price mb-3">${{ item.price }}</div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" @click="decreaseQuantity(index)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="fw-bold">{{ item.quantity }}</span>
+                                    <button class="quantity-btn" @click="increaseQuantity(index)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="remove-btn" @click="removeFromCart(index)">
+                                    <i class="fas fa-trash"></i> Remove
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="product-price">${{ (item.price * item.quantity).toFixed(2) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="order-summary">
+                        <h4 class="mb-4">Order Summary</h4>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>${{ cartSubtotal.toFixed(2) }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Service Fee</span>
+                            <span>${{ serviceFee.toFixed(2) }}</span>
+                        </div>
+                        <div class="summary-row" style="border: none;">
+                            <span class="fw-bold">Total</span>
+                            <span class="summary-total">${{ cartTotal.toFixed(2) }}</span>
+                        </div>
+                        <button class="checkout-btn" @click="currentPage = 'checkout'" :disabled="cart.length === 0">
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Page -->
+        <div v-if="currentPage === 'checkout'" class="checkout-container container">
+            <h2 class="mb-4">Checkout</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                 
+                    <div class="checkout-section">
+                        <div class="section-header">
+                            <div>
+                                <h5 class="mb-1">Delivery Info</h5>
+                                <p class="text-secondary mb-0">Where should we send the confirmation?</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="mt-3">
+                            <div class="form-group">
+                                <input type="text" class="form-input" placeholder="Full Name" v-model="checkout.name">
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-input" placeholder="Email Address" v-model="checkout.email">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" class="form-input" placeholder="Phone Number" v-model="checkout.phone">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-section">
+                        <div class="section-header">
+                            <div>
+                                <h5 class="mb-1">Payment Method</h5>
+                                <p class="text-secondary mb-0">Select your payment method</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="payment-method" :class="{ active: checkout.paymentMethod === 'card' }" @click="checkout.paymentMethod = 'card'">
+                            <input type="radio" name="payment" value="card" v-model="checkout.paymentMethod">
+                            <i class="fas fa-credit-card fa-2x" style="color: var(--primary);"></i>
+                            <div>
+                                <div class="fw-bold">Credit/Debit Card</div>
+                                <div class="text-secondary" style="font-size: 0.875rem;">Visa, Mastercard, Amex</div>
+                            </div>
+                        </div>
+                        <div class="payment-method" :class="{ active: checkout.paymentMethod === 'paypal' }" @click="checkout.paymentMethod = 'paypal'">
+                            <input type="radio" name="payment" value="paypal" v-model="checkout.paymentMethod">
+                            <i class="fab fa-paypal fa-2x" style="color: #003087;"></i>
+                            <div>
+                                <div class="fw-bold">PayPal</div>
+                                <div class="text-secondary" style="font-size: 0.875rem;">Pay with your PayPal account</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Order -->
+                    <div class="checkout-section">
+                        <div class="section-header">
+                            <div>
+                                <h5 class="mb-1">Review Order</h5>
+                                <p class="text-secondary mb-0">{{ cart.length }} items in cart</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="order-summary">
+                        <h4 class="mb-4">Order Summary</h4>
+                        <div class="summary-row">
+                            <span>Items total</span>
+                            <span>${{ cartSubtotal.toFixed(2) }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Service fee</span>
+                            <span>${{ serviceFee.toFixed(2) }}</span>
+                        </div>
+                        
+                        <div class="summary-row" style="border: none;">
+                            <span class="fw-bold">Total</span>
+                            <span class="summary-total">${{ (cartTotal + checkout.tip).toFixed(2) }}</span>
+                        </div>
+                        
+                        <button class="checkout-btn" @click="placeOrder">
+                            Place Order
+                        </button>
+                        <p class="text-center text-secondary mt-3" style="font-size: 0.875rem;">
+                            By placing this order, you agree to Terms and Conditions
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div v-if="currentPage === 'profile'" class="container my-5">
+            <div class="profile-header">
+                <img src="https://ui-avatars.com/api/?name=John+Doe&size=120&background=D6A99D&color=fff" class="profile-avatar">
+                <h2>Rumaisa G</h2>
+                <p class="mb-0">rumaisa@email.com</p>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Active Classes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="profile-section">
+                        <div class="section-title">Personal Information</div>
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" value="Rumaisa ">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" value="rumaisa@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-input" value="+123 456 8900">
+                        </div>
+                        <button class="submit-btn">Update Profile</button>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="profile-section">
+                        <div class="section-title">My Enrollments</div>
+                        <div v-for="enrollment in userEnrollments" :key="enrollment.id" class="mb-3 pb-3" style="border-bottom: 1px solid var(--border);">
+                            <div class="d-flex align-items-center gap-3">
+                                <img :src="enrollment.image" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">{{ enrollment.name }}</div>
+                                    <div class="text-secondary" style="font-size: 0.875rem;">
+                                        <i class="fas fa-calendar"></i> {{ enrollment.schedule }}
+                                    </div>
+                                </div>
+                                <span class="badge" style="background-color: #10B981;">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section mt-4">
+                        <div class="section-title">Saved Activities</div>
+                        <div class="row">
+                            <div class="col-6" v-for="saved in savedActivities" :key="saved.id">
+                                <div class="product-card" style="margin-bottom: 1rem;">
+                                    <div class="product-image-container" style="height: 120px;">
+                                        <img :src="saved.image" :alt="saved.name" class="product-image">
+                                    </div>
+                                    <div class="product-info" style="padding: 0.75rem;">
+                                        <h6 style="font-size: 0.875rem; margin-bottom: 0.5rem;">{{ saved.name }}</h6>
+                                        <div class="product-price" style="font-size: 1rem;">${{ saved.price }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sign In Page -->
+        <div v-if="currentPage === 'signin'" class="auth-container">
+            <div class="auth-card fade-in-up">
+                <h2 class="auth-title">Welcome Back!</h2>
+                <p class="auth-subtitle">Sign in to continue your learning journey</p>
+                
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" placeholder="Enter your password">
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="filter-option">
+                            <input type="checkbox" id="remember">
+                            <label for="remember" style="font-size: 0.875rem;">Remember me</label>
+                        </div>
+                        <a href="#" style="color: var(--primary); font-size: 0.875rem; text-decoration: none;">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="submit-btn">Sign In</button>
+                </form>
+
+                <div class="divider">OR</div>
+
+                <div class="social-login">
+                    <button class="social-btn">
+                        <i class="fab fa-google"></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class="fab fa-apple"></i>
+                    </button>
+                </div>
+
+                <p class="text-center mt-4 text-secondary">
+                    Don't have an account? <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600;">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-section">
+                            <div class="navbar-brand mb-3">
+                                <i class="fas fa-graduation-cap"></i> RU Academy 
+                            </div>
+                            <p class="text-secondary">Empowering students with quality after-school education and activities. Join thousands of learners discovering their passion.</p>
+                            <div class="social-icons">
+                                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-title">Quick Links</div>
+                            <a href="#" class="footer-link">About Us</a>
+                            <a href="#" class="footer-link">Activities</a>
+                            
+                          
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-title">Support</div>
+                            <a href="#" class="footer-link">Contact Us</a>
+                            <a href="#" class="footer-link">FAQs</a>
+                            
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-title">Newsletter</div>
+                            <p class="text-secondary">Subscribe to get updates on new activities and special offers!</p>
+                            <div class="navbar-search">
+                                <input type="email" placeholder="Your email...">
+                                <button>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; RU Academy. Made with <i class="fas fa-heart" style="color: var(--primary);"></i> for students everywhere.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" @click="toggleTheme">
+            <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+        </button>
+    </div>
+
+    
+    <script>
+       
+       let lessonApp = new Vue({
+            el: '#app',
+            data: {
+                currentPage: 'home',
+                isDarkMode: false,
+                searchQuery: '',
+                selectedCategory: 'all',
+                cartItems: 0,
+                sortBy: 'featured',
+                currentSlide: 0,
+                selectedImage: '',
+                reviewRating: 0,
+                reviewText: '',
+                
+                filters: {
+                    categories: [],
+                    locations: [],
+                    minPrice: 0,
+                    maxPrice: 300,
+                    availability: 'all',
+                    minSpaces:0,
+                    selectedDays:'All Days'                
+                },
+                
+                // Filter Options
+                categories: [
+                    { value: 'Sports & Games', label: 'Sports & Games' },
+                    { value: 'Music', label: 'Music' },
+                    { value: 'Art & Craft', label: 'Art & Craft' },
+                    { value: 'STEM', label: 'STEM' },
+                    { value: 'Languages', label: 'Languages' },
+                ],
+                days: [
+                    {value: ['Monday', 'Tuesday', 'Wednesday', 'Thursday','Friday'], label: 'Weekdays'},
+                    {value: ['Saturday', 'Sunday'], label: 'Weekends'},
+                    {value: [], label:'All Days'}
+                ],
+                locations: [
+                    'Port-Louis', 'Curepipe', 'Quatre Bornes', 'Rose-Hill', 'Vacoas'
+                ],
+
+            
+                // Featured Activities
+                Activities: [],
+                activityImages: [],
+                
+                // Cart
+                cart: [],
+                
+                // Checkout
+                checkout: {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    paymentMethod: 'card',
+                    tip: 0
+                },
+                
+                selectedActivity: null,
+                
+                // Sample Reviews
+                sampleReviews: [
+                    {
+                        id: 1,
+                        name: 'Sarah Johnson',
+                        rating: 5,
+                        avatar: 'https://ui-avatars.com/api/?name=Sarah+Johnson&background=D6A99D&color=fff',
+                        comment: 'My daughter absolutely loves this class! The instructor is patient and engaging. Highly recommend!'
+                    },
+                    {
+                        id: 2,
+                        name: 'Mike Chen',
+                        rating: 5,
+                        avatar: 'https://ui-avatars.com/api/?name=Mike+Chen&background=9CAFAA&color=fff',
+                        comment: 'Great program! My son has improved so much in just a few weeks. The schedule is flexible too.'
+                    },
+                    {
+                        id: 3,
+                        name: 'Emily Rodriguez',
+                        rating: 4,
+                        avatar: 'https://ui-avatars.com/api/?name=Emily+Rodriguez&background=D6DAC8&color=000',
+                        comment: 'Very good class with excellent facilities. Would give 5 stars if the timing was more convenient.'
+                    }
+                ],
+                
+                // User Enrollments
+                userEnrollments: [
+                    {
+                        id: 1,
+                        name: 'Basketball Training',
+                        schedule: 'Mon, Wed, Fri - 4:00 PM',
+                        image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=100&h=100&fit=crop'
+                    },
+                    {
+                        id: 2,
+                        name: 'Piano Lessons',
+                        schedule: 'Tue, Thu - 3:30 PM',
+                        image: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=100&h=100&fit=crop'
+                    }
+                ],
+                
+                // Saved Activities
+                savedActivities: [
+                    {
+                        id: 1,
+                        name: 'Coding for Kids',
+                        price: 110.00,
+                        image: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=200&h=200&fit=crop'
+                    },
+                    {
+                        id: 2,
+                        name: 'Ballet Dance',
+                        price: 95.00,
+                        image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=200&h=200&fit=crop'
+                    }
+                ]
+            },
+            
+           
+            created()  { 
+                this.fetchActivities();
+
+                    
+            },
+
+
+            computed: {
+                filteredActivities() {
+                    let activities = [...this.Activities];
+                    
+                    if (this.filters.categories.length > 0) {
+                        activities = activities.filter(a => this.filters.categories.includes(a.category));
+                    }
+                    
+                    if (this.filters.locations.length > 0) {
+                        activities = activities.filter(a => this.filters.locations.includes(a.location));
+                    }
+
+                    activities = activities.filter( a => {
+                           return a.spaces >= this.filters.minSpaces;
+                    })
+                    
+                    activities = activities.filter(a => {
+                        return a.price >= this.filters.minPrice && a.price <= this.filters.maxPrice;
+                    });
+
+                     if (this.filters.selectedDays && this.filters.selectedDays !== 'All Days') {
+                        activities = activities.filter(activity => {
+                            const selectedOption = this.days.find(option => option.label === this.filters.selectedDays);
+                            return activity.days.some(day => selectedOption.value.includes(day));
+                         });
+                    }
+                    
+                    return activities;
+                },
+                
+                sortedActivities() {
+                    let activities = [...this.filteredActivities];
+                    
+                    switch(this.sortBy) {
+                        case 'price-asc':
+                            return activities.sort((a, b) => a.price - b.price);
+                        case 'price-desc':
+                            return activities.sort((a, b) => b.price - a.price);
+                        case 'rating':
+                            return activities.sort((a, b) => b.rating - a.rating);
+                        case 'popular':
+                            return activities.sort((a, b) => b.reviews - a.reviews);
+                        default:
+                            return activities;
+                    }
+                },
+                
+                cartSubtotal() {
+                    return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                },
+                
+                serviceFee() {
+                    return this.cartSubtotal * 0.05;
+                },
+                
+                cartTotal() {
+                    return this.cartSubtotal + this.serviceFee;
+                }
+            },
+            
+            methods: {
+                fetchActivities() {
+                    return fetch("http://localhost:3000/api/lessons")
+                        .then(response => response.json())
+                        .then(data => {
+                            this.Activities = data;
+                        })
+                        .catch(error => {
+                            console.error("Error fetching activities:", error);
+                        });
+                },
+
+                toggleTheme() {
+                    this.isDarkMode = !this.isDarkMode;
+                    document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
+                },
+                
+                openSidebar() {
+                    document.getElementById('sidebarMenu').classList.add('active');
+                    document.getElementById('sidebarOverlay').classList.add('active');
+                },
+                
+                closeSidebar() {
+                    document.getElementById('sidebarMenu').classList.remove('active');
+                    document.getElementById('sidebarOverlay').classList.remove('active');
+                },
+                
+                filterByCategory(category) {
+                    this.selectedCategory = category;
+                    if (category === 'all') {
+                        this.filters.categories = [];
+                    } else {
+                        this.filters.categories = [category];
+                    }
+                    this.currentPage = 'activities';
+                },
+                
+                searchActivities() {
+                    if (this.searchQuery.trim()) {
+                        this.currentPage = 'search';
+                    }
+                },
+                
+                resetFilters() {
+                    this.filters = {
+                        categories: [],
+                        locations: [],
+                        minPrice: 0,
+                        maxPrice: 300,
+                        availability: 'all',
+                        minSpaces:0,
+                        selectedDays:'All Days'                
+
+                    };
+                },
+                
+                addToCart(activity) {
+                    if (activity.spaces > 0) {
+                    const existingItem = this.cart.find(item => 
+                        item.topic === activity.topic &&
+                        item.location === activity.location &&
+                        item.price === activity.price
+                    );
+
+                    if (existingItem) {
+                       
+                        if (activity.spaces > 0) {
+                        existingItem.quantity++;
+                        activity.spaces--; 
+                        }
+                    } else {
+                        this.cart.push({
+                        ...activity,
+                        quantity: 1
+                        });
+                        activity.spaces--; 
+                    }
+
+                    this.updateCartItemsCount();
+                    }
+                },
+
+                increaseQuantity(index) {
+                    const cartItem = this.cart[index];
+                    const originalActivity = this.Activities.find(activity => 
+                    activity.topic === cartItem.topic &&
+                    activity.location === cartItem.location &&
+                    activity.price === cartItem.price
+                    );
+
+                    if (originalActivity && originalActivity.spaces > 0) {
+                    cartItem.quantity++;
+                    originalActivity.spaces--; 
+                    this.updateCartItemsCount();
+                    }
+                },
+
+  
+                decreaseQuantity(index) {
+                    const cartItem = this.cart[index];
+
+                    const originalActivity = this.Activities.find(activity => 
+                    activity.topic === cartItem.topic &&
+                    activity.location === cartItem.location &&
+                    activity.price === cartItem.price
+                    );
+
+                    if (cartItem.quantity > 1) {
+                    cartItem.quantity--;
+                    if (originalActivity) originalActivity.spaces++; 
+                    this.updateCartItemsCount();
+                    } else if (cartItem.quantity === 1) {
+                    this.removeFromCart(index);
+                    }
+                },
+
+ 
+                removeFromCart(index) {
+                    const cartItem = this.cart[index];
+                    const originalActivity = this.Activities.find(activity => 
+                    activity.topic === cartItem.topic &&
+                    activity.location === cartItem.location &&
+                    activity.price === cartItem.price
+                    );
+
+                    if (originalActivity) {
+                    
+                    originalActivity.spaces += cartItem.quantity;
+                    }
+
+                    this.cart.splice(index, 1);
+                    this.updateCartItemsCount();
+                },
+
+                updateCartItemsCount() {
+                    this.cartItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                },
+
+                getRemainingSpaces(cartItem) {
+                    const originalActivity = this.Activities.find(activity => 
+                         activity.topic === cartItem.topic && 
+                        activity.location === cartItem.location
+                    );
+                     return originalActivity ? originalActivity.spaces : 0;
+                },
+                    
+                    toggleFavorite(activity) {
+                        activity.favorite = !activity.favorite;
+                    },
+                    
+                    viewActivity(activity) {
+                        this.selectedActivity = activity;
+                        this.activityImages = activity.imageUrl
+                        this.selectedImage = this.activityImages[0];
+                        this.currentPage = 'activity-detail';
+                        window.scrollTo(0, 0);
+                    },
+                
+                submitReview() {
+                    if (this.reviewRating === 0 || !this.reviewText.trim()) {
+                        alert('Please provide a rating and review text');
+                        return;
+                    }
+                    alert('Thank you for your review!');
+                    this.reviewRating = 0;
+                    this.reviewText = '';
+                },
+                
+                placeOrder() {
+                    if (!this.checkout.name || !this.checkout.email || !this.checkout.phone) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+                    alert('Order placed successfully! You will receive a confirmation email shortly.');
+                    this.cart = [];
+                    this.cartItems = 0;
+                    this.currentPage = 'home';
+                }
+            },
+            
+            mounted() {
+                
+                setInterval(() => {
+                    this.currentSlide = (this.currentSlide + 1) % 3;
+                }, 5000);
+                
+                // Close sidebar when clicking overlay
+                document.getElementById('sidebarOverlay').addEventListener('click', () => {
+                    this.closeSidebar();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
