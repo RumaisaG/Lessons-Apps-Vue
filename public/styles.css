@@ -574,11 +574,6 @@
             accent-color: var(--primary);
         }
 
-        /* Price Range Slider */
-        .price-range {
-            padding: 1rem 0;
-        }
-
         .price-range input[type="range"] {
             width: 100%;
             accent-color: var(--primary);
@@ -1167,15 +1162,6 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(214, 169, 157, 0.1);
-        }
-
-        
-        .is-valid {
-            border: 2px solid #28a745 !important;
-        }
-
-        .is-invalid {
-            border: 2px solid #dc3545 !important;
         }
 
         .error-message {

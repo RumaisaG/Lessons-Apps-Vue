@@ -317,7 +317,6 @@
                         <div class="filter-section">
                             <div class="filter-section-title">Number of Seats</div>
                             <div class="price-range">
-                                <input type="range" class="form-range" min="80" v-model="filters.minSpaces">
                                 <div class="price-inputs">
                                     <input type="number" class="price-input" placeholder="Minimum Seats" v-model="filters.minSpaces">
                                 </div>
@@ -356,7 +355,6 @@
 
                 <!-- Activities Grid -->
                 <div class="col-lg-9">
-                  
                     <div class="sort-container">
                         <span class="text-secondary">{{ filteredActivities.length }} results</span>
                         <select class="sort-select" v-model="sortBy">
@@ -373,11 +371,6 @@
                             <div class="product-card" @click="viewActivity(activity)">
                                 <div class="product-image-container">
                                     <img :src="activity.imageUrl[0]" :alt="activity.topic" class="product-image">
-                                    <div class="product-badge" v-if="activity.badge">{{ activity.badge }}</div>
-                                    <div class="product-favorite" @click.stop="toggleFavorite(activity)">
-                                        <i :class="activity.favorite ? 'fas fa-heart' : 'far fa-heart'" 
-                                        :style="activity.favorite ? 'color: var(--primary)' : ''"></i>
-                                    </div>
                                 </div>
                                 <div class="product-info">
                                     <h5 class="product-title">{{ activity.topic }}</h5>
@@ -440,12 +433,6 @@
                 </div>
                 <div class="col-lg-5">
                     <div class="profile-section">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="product-badge">{{ selectedActivity.badge }}</span>
-                            <div class="product-favorite" @click="toggleFavorite(selectedActivity)" style="position: relative;">
-                                <i :class="selectedActivity.favorite ? 'fas fa-heart' : 'far fa-heart'" :style="selectedActivity.favorite ? 'color: var(--primary)' : ''"></i>
-                            </div>
-                        </div>
                         <h1 class="mb-3">{{ selectedActivity.topic }}</h1>
                         <div class="product-location mb-3" style="font-size: 1.1rem;">
                             <i class="fas fa-map-marker-alt"></i> {{ selectedActivity.location }}
@@ -526,7 +513,7 @@
                     <label class="form-label">Your Review</label>
                     <textarea class="form-input" rows="4" placeholder="Share your experience..." v-model="reviewText"></textarea>
                 </div>
-                <button class="submit-btn" @click="submitReview">Submit Review</button>
+                <button class="submit-btn" >Submit Review</button>
             </div>
         </div>
 
@@ -642,7 +629,7 @@
                             <span class="summary-total">${{ cartTotal.toFixed(2) }}</span>
                         </div>
 
-                        <button class="checkout-btn" @click="validateCheckout">
+                        <button class="checkout-btn">
                             Complete checkout
                         </button>
                     </div>
@@ -889,8 +876,6 @@
                     'Port-Louis', 'Curepipe', 'Quatre Bornes', 'Rose-Hill', 'Vacoas'
                 ],
 
-           
-          
                 cart: [],
                 
                 checkout: {
@@ -1027,6 +1012,11 @@
                 cartTotal() {
                     return this.cartSubtotal + this.serviceFee;
                 },
+
+                isCheckoutValid() {
+                    const fieldsFilled = this.checkout.name.length > 0 && this.checkout.email.length > 0 &&  this.checkout.phone.length > 0;
+                    return fieldsFilled && this.nameValid && this.emailValid && this.phoneValid;
+                }
               
             },
             
@@ -1036,12 +1026,14 @@
                         .then(response => response.json())
                         .then(data => {
                             this.Activities = data;
+                            console.log('Loaded activities with IDs:', data.map(a => ({ topic: a.topic, _id: a._id })));
                         })
                         .catch(error => {
                             console.error("Error fetching activities:", error);
                         });
                 },
-        
+
+
             onSearchInput() {
                 if (this.searchQuery.length === 0) {
                     this.hideSearchDropdown();
@@ -1131,21 +1123,21 @@
                 }
             },
             
-    validateAllFields() {
+             validateAllFields() {
+                const nameRegex = /^[A-Za-z\s]{2,}$/;
+                this.nameValid = nameRegex.test(this.checkout.name.trim());
+                
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                this.emailValid = emailRegex.test(this.checkout.email.trim());
+                
+                const phoneRegex = /^\d{8}$/;
+                this.phoneValid = phoneRegex.test(this.checkout.phone.trim());
+                
+                return this.nameValid && this.emailValid && this.phoneValid;
+            },
+
       
-        const nameRegex = /^[A-Za-z\s]*$/;
-        this.nameValid = nameRegex.test(this.checkout.name.trim());
-        
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        this.emailValid = emailRegex.test(this.checkout.email.trim());
-      
-        const phoneRegex = /^\d{8,}$/;
-        this.phoneValid = phoneRegex.test(this.checkout.phone.trim());
-    },
-    
-    validateCheckout() {
-        return this.nameValid && this.emailValid && this.phoneValid;
-    },
+
     
                    
                 toggleTheme() {
@@ -1186,81 +1178,68 @@
                     };
                 },
                 
-                addToCart(activity) {
+               addToCart(activity) {
                     if (activity.spaces > 0) {
-                    const existingItem = this.cart.find(item => 
-                        item.topic === activity.topic &&
-                        item.location === activity.location &&
-                        item.price === activity.price
-                    );
+                        const existingItem = this.cart.find(item => 
+                            item._id === activity._id  
+                        );
 
-                    if (existingItem) {
-                       
-                        if (activity.spaces > 0) {
-                        existingItem.quantity++;
-                        activity.spaces--; 
+                        if (existingItem) {
+                            if (activity.spaces > 0) {
+                                existingItem.quantity++;
+                                activity.spaces--; 
+                            }
+                        } else {
+                            this.cart.push({
+                                ...activity,  
+                                quantity: 1
+                            });
+                            activity.spaces--; 
                         }
-                    } else {
-                        this.cart.push({
-                        ...activity,
-                        quantity: 1
-                        });
-                        activity.spaces--; 
-                    }
-
-                    this.updateCartItemsCount();
+                        this.updateCartItemsCount();
                     }
                 },
 
                 increaseQuantity(index) {
                     const cartItem = this.cart[index];
-                    const originalActivity = this.Activities.find(activity => 
-                    activity.topic === cartItem.topic &&
-                    activity.location === cartItem.location &&
-                    activity.price === cartItem.price
-                    );
+                        const originalActivity = this.Activities.find(activity => 
+                            activity._id === cartItem._id  
+                        );
 
-                    if (originalActivity && originalActivity.spaces > 0) {
-                    cartItem.quantity++;
-                    originalActivity.spaces--; 
-                    this.updateCartItemsCount();
-                    }
-                },
+                        if (originalActivity && originalActivity.spaces > 0) {
+                            cartItem.quantity++;
+                            originalActivity.spaces--; 
+                            this.updateCartItemsCount();
+                        }    
+                 },
 
-                decreaseQuantity(index) {
-                    const cartItem = this.cart[index];
+            decreaseQuantity(index) {
+                const cartItem = this.cart[index];
+                const originalActivity = this.Activities.find(activity => 
+                    activity._id === cartItem._id 
+                );
 
-                    const originalActivity = this.Activities.find(activity => 
-                    activity.topic === cartItem.topic &&
-                    activity.location === cartItem.location &&
-                    activity.price === cartItem.price
-                    );
-
-                    if (cartItem.quantity > 1) {
+                if (cartItem.quantity > 1) {
                     cartItem.quantity--;
                     if (originalActivity) originalActivity.spaces++; 
                     this.updateCartItemsCount();
-                    } else if (cartItem.quantity === 1) {
+                } else if (cartItem.quantity === 1) {
                     this.removeFromCart(index);
-                    }
-                },
+                }
+            },
 
-                removeFromCart(index) {
-                    const cartItem = this.cart[index];
-                    const originalActivity = this.Activities.find(activity => 
-                    activity.topic === cartItem.topic &&
-                    activity.location === cartItem.location &&
-                    activity.price === cartItem.price
-                    );
+            removeFromCart(index) {
+                const cartItem = this.cart[index];
+                const originalActivity = this.Activities.find(activity => 
+                    activity._id === cartItem._id  
+                );
 
-                    if (originalActivity) {
-                    
+                if (originalActivity) {
                     originalActivity.spaces += cartItem.quantity;
-                    }
-
-                    this.cart.splice(index, 1);
-                    this.updateCartItemsCount();
-                },
+                }
+                this.cart.splice(index, 1);
+                this.updateCartItemsCount();
+            },
 
                 updateCartItemsCount() {
                     this.cartItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -1272,16 +1251,6 @@
                         this.selectedImage = this.activityImages[0];
                         this.currentPage = 'activity-detail';
                         window.scrollTo(0, 0);
-                },
-                
-                submitReview() {
-                    if (this.reviewRating === 0 || !this.reviewText.trim()) {
-                        alert('Please provide a rating and review text');
-                        return;
-                    }
-                    alert('Thank you for your review!');
-                    this.reviewRating = 0;
-                    this.reviewText = '';
                 },
                 
                
