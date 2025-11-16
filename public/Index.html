@@ -629,7 +629,7 @@
                             <span class="summary-total">${{ cartTotal.toFixed(2) }}</span>
                         </div>
 
-                        <button class="checkout-btn">
+                        <button class="checkout-btn" @click="processCheckout" :disabled="!isCheckoutValid">
                             Complete checkout
                         </button>
                     </div>
