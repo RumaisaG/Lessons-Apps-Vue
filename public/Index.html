@@ -123,9 +123,6 @@
                             <i class="fas fa-shopping-cart"></i>
                             <span class="badge-custom" v-if="cartItems > 0">{{ cartItems }}</span>
                         </button>
-                        <button class="icon-btn" @click="currentPage = 'profile'">
-                            <i class="fas fa-user"></i>
-                        </button>
                     </div>
                 </div>
                 
@@ -185,7 +182,7 @@
         <div v-if="currentPage === 'home'">
            
             <div class="hero-section">
-                <div class="hero-slide" :class="{ active: currentSlide === 0 }" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1600&h=900&fit=crop');">
+                <div class="hero-slide" :class="{ active: currentSlide === 0 }" style="background-image: url('/hero1.jpg');">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Discover Your Passion</h1>
@@ -194,7 +191,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-slide" :class="{ active: currentSlide === 1 }" style="background-image: url('https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=1600&h=900&fit=crop');">
+                <div class="hero-slide" :class="{ active: currentSlide === 1 }" style="background-image: url('/hero2.jpg');">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Expert Instructors</h1>
@@ -203,7 +200,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-slide" :class="{ active: currentSlide === 2 }" style="background-image: url('https://images.unsplash.com/photo-1529390079861-591de354faf5?w=1600&h=900&fit=crop');">
+                <div class="hero-slide" :class="{ active: currentSlide === 2 }" style="background-image: url('/hero3.jpeg');">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Build Your Future</h1>
@@ -218,6 +215,61 @@
                     <div class="hero-dot" :class="{ active: currentSlide === 2 }" @click="currentSlide = 2"></div>
                 </div>
             </div>
+
+             <!-- Benefits Section -->
+            <section id="benefits" class="benefits-section">
+                <div class="container">
+                    <h1 class="section-title">Why Parents Choose Ru Academy</h1>
+                    <p class="section-subtitle">
+                        We create a nurturing environment where every child can thrive, explore, and grow
+                    </p>
+                    
+                    <div class="row">
+                        <!-- Benefit 1 -->
+                        <div class="col-md-4 mb-4">
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <h3 class="benefit-title">Expert-Led Learning</h3>
+                                <p class="benefit-description">
+                                    Our certified instructors bring years of experience and passion to every workshop, 
+                                    ensuring your child receives the best guidance in a fun, supportive environment.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 2 -->
+                        <div class="col-md-4 mb-4">
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3 class="benefit-title">Small Group Sizes</h3>
+                                <p class="benefit-description">
+                                    With a maximum of 15 students per class, we guarantee personalized attention 
+                                    and meaningful interaction, helping each child build confidence and friendships.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 3 -->
+                        <div class="col-md-4 mb-4">
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <h3 class="benefit-title">Hands-On Activities</h3>
+                                <p class="benefit-description">
+                                    From robotics to art, coding to dance, our interactive workshops engage children 
+                                    in practical learning that sparks creativity and builds real-world skills.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
 
             <div class="container my-4">
                
@@ -638,127 +690,6 @@
             </div>
         </div>
 
-        <!-- Profile Page -->
-        <div v-if="currentPage === 'profile'" class="container my-5">
-            <div class="profile-header">
-                <img src="https://ui-avatars.com/api/?name=John+Doe&size=120&background=D6A99D&color=fff" class="profile-avatar">
-                <h2>Rumaisa G</h2>
-                <p class="mb-0">rumaisa@email.com</p>
-                
-                <div class="profile-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Active Classes</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">8</div>
-                        <div class="stat-label">Completed</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="profile-section">
-                        <div class="section-title">Personal Information</div>
-                        <div class="form-group">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-input" value="Rumaisa ">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-input" value="rumaisa@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Phone</label>
-                            <input type="tel" class="form-input" value="+123 456 8900">
-                        </div>
-                        <button class="submit-btn">Update Profile</button>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="profile-section">
-                        <div class="section-title">My Enrollments</div>
-                        <div v-for="enrollment in userEnrollments" :key="enrollment.id" class="mb-3 pb-3" style="border-bottom: 1px solid var(--border);">
-                            <div class="d-flex align-items-center gap-3">
-                                <img :src="enrollment.image" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
-                                <div class="flex-grow-1">
-                                    <div class="fw-bold">{{ enrollment.name }}</div>
-                                    <div class="text-secondary" style="font-size: 0.875rem;">
-                                        <i class="fas fa-calendar"></i> {{ enrollment.schedule }}
-                                    </div>
-                                </div>
-                                <span class="badge" style="background-color: #10B981;">Active</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="profile-section mt-4">
-                        <div class="section-title">Saved Activities</div>
-                        <div class="row">
-                            <div class="col-6" v-for="saved in savedActivities" :key="saved.id">
-                                <div class="product-card" style="margin-bottom: 1rem;">
-                                    <div class="product-image-container" style="height: 120px;">
-                                        <img :src="saved.image" :alt="saved.name" class="product-image">
-                                    </div>
-                                    <div class="product-info" style="padding: 0.75rem;">
-                                        <h6 style="font-size: 0.875rem; margin-bottom: 0.5rem;">{{ saved.name }}</h6>
-                                        <div class="product-price" style="font-size: 1rem;">${{ saved.price }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sign In Page -->
-        <div v-if="currentPage === 'signin'" class="auth-container">
-            <div class="auth-card fade-in-up">
-                <h2 class="auth-title">Welcome Back!</h2>
-                <p class="auth-subtitle">Sign in to continue your learning journey</p>
-                
-                <form>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-input" placeholder="Enter your password">
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="filter-option">
-                            <input type="checkbox" id="remember">
-                            <label for="remember" style="font-size: 0.875rem;">Remember me</label>
-                        </div>
-                        <a href="#" style="color: var(--primary); font-size: 0.875rem; text-decoration: none;">Forgot password?</a>
-                    </div>
-                    <button type="submit" class="submit-btn">Sign In</button>
-                </form>
-
-                <div class="divider">OR</div>
-
-                <div class="social-login">
-                    <button class="social-btn">
-                        <i class="fab fa-google"></i>
-                    </button>
-                    <button class="social-btn">
-                        <i class="fab fa-facebook-f"></i>
-                    </button>
-                    <button class="social-btn">
-                        <i class="fab fa-apple"></i>
-                    </button>
-                </div>
-
-                <p class="text-center mt-4 text-secondary">
-                    Don't have an account? <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600;">Sign Up</a>
-                </p>
-            </div>
-        </div>
-
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
@@ -857,8 +788,6 @@
                     selectedDays:'All Days'                
                 },
               
-
-
                 // Filter Options
                 categories: [
                     { value: 'Sports & Games', label: 'Sports & Games' },
@@ -937,7 +866,6 @@
                     }
                 ],
                 
-        
             },
             
            
@@ -1363,7 +1291,6 @@
                         window.scrollTo(0, 0);
                 },
                 
-               
             },
             
             mounted() {
