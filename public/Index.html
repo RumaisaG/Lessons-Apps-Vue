@@ -355,6 +355,7 @@
                                 <label :for="category.value">{{ category.label }}</label>
                             </div>
                         </div>
+                        <hr>
 
                         <!-- Location Filter -->
                         <div class="filter-section">
@@ -364,6 +365,7 @@
                                 <label :for="location">{{ location }}</label>
                             </div>
                         </div>
+                        <hr>
 
                         <!-- Seats Filter -->
                         <div class="filter-section">
@@ -374,6 +376,7 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
 
                         <!-- Price Range -->
                         <div class="filter-section">
@@ -386,6 +389,7 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
 
                         <!-- Availability Filter -->
                         <div class="filter-section">
@@ -522,51 +526,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Reviews Section -->
-            <div class="profile-section mt-5">
-                <div class="section-title">Customer Reviews</div>
-                <div class="mb-4">
-                    <h3 class="d-inline me-3">{{selectedActivity.rating}}</h3>
-                    <div class="stars d-inline">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <span class="text-secondary ms-2">({{ selectedActivity.reviews.length }} reviews)</span>
-                </div>
-                
-                <div v-for="review in sampleReviews" :key="review.id" class="mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
-                    <div class="d-flex align-items-center mb-2">
-                        <img :src="review.avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 1rem;">
-                        <div>
-                            <div class="fw-bold">{{ review.name }}</div>
-                            <div class="stars" style="font-size: 0.875rem;">
-                                <i v-for="n in review.rating" :key="n" class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-secondary mb-0">{{ review.comment }}</p>
-                </div>
-            </div>
-
-            <!-- Add Review Form -->
-            <div class="review-form">
-                <div class="section-title">Write a Review</div>
-                <div class="form-group">
-                    <label class="form-label">Your Rating</label>
-                    <div class="star-rating">
-                        <i v-for="n in 5" :key="n" class="fas fa-star" :class="{ active: n <= reviewRating }" @click="reviewRating = n"></i>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Your Review</label>
-                    <textarea class="form-input" rows="4" placeholder="Share your experience..." v-model="reviewText"></textarea>
-                </div>
-                <button class="submit-btn" >Submit Review</button>
-            </div>
         </div>
 
         <!-- Cart Page -->
@@ -692,56 +651,49 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="footer-section">
-                            <div class="navbar-brand mb-3">
-                                <i class="fas fa-graduation-cap"></i> RU Academy 
-                            </div>
-                            <p class="text-secondary">Empowering students with quality after-school education and activities. Join thousands of learners discovering their passion.</p>
-                            <div class="social-icons">
-                                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-6">
-                        <div class="footer-section">
-                            <div class="footer-title">Quick Links</div>
-                            <a href="#" class="footer-link">About Us</a>
-                            <a href="#" class="footer-link">Activities</a>
-                            
-                          
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-6">
-                        <div class="footer-section">
-                            <div class="footer-title">Support</div>
-                            <a href="#" class="footer-link">Contact Us</a>
-                            <a href="#" class="footer-link">FAQs</a>
-                            
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="footer-section">
-                            <div class="footer-title">Newsletter</div>
-                            <p class="text-secondary">Subscribe to get updates on new activities and special offers!</p>
-                            <div class="navbar-search">
-                                <input type="email" placeholder="Your email...">
-                                <button>
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer-bottom">
-                    <p>&copy; RU Academy. Made with <i class="fas fa-heart" style="color: var(--primary);"></i> for students everywhere.</p>
+        <div class="container">
+            <!-- Brand & Description -->
+            <div class="footer-section">
+                <a href="#" class="navbar-brand">
+                    <i class="fas fa-graduation-cap"></i> RU Academy
+                </a>
+                <p class="footer-description">
+                    Empowering students with quality after-school education and activities. 
+                    Join thousands of learners discovering their passion.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <div class="footer-title">Quick Links</div>
+                <div class="footer-links">
+                    <a href="#home" class="footer-link" @click="currentPage = 'home'">Home</a>
+                    <a href="#activities" class="footer-link"  @click="currentPage = 'activities'">Activities</a>
                 </div>
             </div>
+
+            <!-- Social Icons -->
+            <div class="social-icons">
+                <a href="#" class="social-icon" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-icon" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-icon" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="social-icon" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>
+                    &copy; 2025 RU Academy
+                </p>
+            </div>
+        </div>
         </footer>
 
         <!-- Theme Toggle Button -->
@@ -756,11 +708,15 @@
        let lessonApp = new Vue({
             el: '#app',
             data: {
+                // to move from different pages
                 currentPage: 'home',
                 isDarkMode: false,
-              
+
+                // to store the different after school activities
                 Activities: [],
                 activityImages: [],
+                
+                selectedActivity: null,
               
                 searchQuery: '',
                 searchResults:[],
@@ -771,13 +727,12 @@
                 useSearchResults: false,
                 
                 selectedCategory: 'all',
-                cartItems: 0,
                 sortBy: 'featured',
+
                 currentSlide: 0,
                 selectedImage: '',
-                reviewRating: 0,
-                reviewText: '',
                 
+                // different filters options
                 filters: {
                     categories: [],
                     locations: [],
@@ -788,7 +743,6 @@
                     selectedDays:'All Days'                
                 },
               
-                // Filter Options
                 categories: [
                     { value: 'Sports & Games', label: 'Sports & Games' },
                     { value: 'Music', label: 'Music' },
@@ -805,67 +759,27 @@
                     'Port-Louis', 'Curepipe', 'Quatre Bornes', 'Rose-Hill', 'Vacoas'
                 ],
 
+                cartItems: 0,
+                // to store the user's cart items
                 cart: [],
-                
                 checkout: {
                     name: '',
                     email: '',
                     phone: '',
                     email: ''
                 },
+
+                // for checking whether the input fields pass the validation checks
                 nameValid: true,
                 phoneValid: true,
                 emailValid: true,
+
 
                 validationMessages: {
                         name: '',
                         phone: '',
                         email: ''
                 },
-
-                selectedActivity: null,
-                
-                // Sample Reviews
-                sampleReviews: [
-                    {
-                        id: 1,
-                        name: 'Sarah Johnson',
-                        rating: 5,
-                        avatar: 'https://ui-avatars.com/api/?name=Sarah+Johnson&background=D6A99D&color=fff',
-                        comment: 'My daughter absolutely loves this class! The instructor is patient and engaging. Highly recommend!'
-                    },
-                    {
-                        id: 2,
-                        name: 'Mike Chen',
-                        rating: 5,
-                        avatar: 'https://ui-avatars.com/api/?name=Mike+Chen&background=9CAFAA&color=fff',
-                        comment: 'Great program! My son has improved so much in just a few weeks. The schedule is flexible too.'
-                    },
-                    {
-                        id: 3,
-                        name: 'Emily Rodriguez',
-                        rating: 4,
-                        avatar: 'https://ui-avatars.com/api/?name=Emily+Rodriguez&background=D6DAC8&color=000',
-                        comment: 'Very good class with excellent facilities. Would give 5 stars if the timing was more convenient.'
-                    }
-                ],
-                
-                // User Enrollments
-                userEnrollments: [
-                    {
-                        id: 1,
-                        name: 'Basketball Training',
-                        schedule: 'Mon, Wed, Fri - 4:00 PM',
-                        image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=100&h=100&fit=crop'
-                    },
-                    {
-                        id: 2,
-                        name: 'Piano Lessons',
-                        schedule: 'Tue, Thu - 3:30 PM',
-                        image: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=100&h=100&fit=crop'
-                    }
-                ],
-                
             },
             
            
