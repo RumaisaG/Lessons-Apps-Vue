@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RU Academy - After School Activities</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Jersey+10&family=Nova+Square&family=Pixelify+Sans:wght@400..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+    </style>
+     
+</head>
+<body>
+   
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <div id="app">
+        <!-- Sidebar Menu -->
+        <div class="sidebar-menu" id="sidebarMenu">
+            <button class="sidebar-close" @click="closeSidebar">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="navbar-brand mb-4">
+                <i class="fas fa-graduation-cap"></i> RU Academy
+            </div>
+            <div class="sidebar-links">
+                <a href="#home" class="sidebar-link" @click="currentPage = 'home'; closeSidebar()">
+                    <i class="fas fa-home me-2"></i> Home
+                </a>
+                <a href="#activities" class="sidebar-link" @click="currentPage = 'activities'; closeSidebar()">
+                    <i class="fas fa-th-large me-2"></i> Activities
+                </a>
+            </div>
+        </div>
+
+        <!-- The navbar -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="d-flex align-items-center ms-5 gap-3">
+                        <button class="mobile-menu-btn" @click="openSidebar">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="#" class="navbar-brand" @click="currentPage = 'home'">
+                            <i class="fas fa-graduation-cap"></i> RU Academy
+                        </a>
+                    </div>
+                    
+                    <div class="desktop-nav d-none d-lg-flex gap-3">
+                        <a href="#home" class="nav-link" @click="currentPage = 'home'">Home</a>
+                        <a href="#activities" class="nav-link" @click="currentPage = 'activities'">Activities</a>
+                    </div>
+
+                    <!-- the search bar section -->
+                    <div class="d-none d-md-block flex-grow-1 mx-4" style="max-width: 500px;">
+                        <div class="navbar-search">
+                            <input 
+                                type="text" 
+                                placeholder="Search activities..."
+                                v-model="searchQuery"
+                                @input="onSearchInput"
+                                @blur="onSearchBlur"
+                                @focus="onSearchFocus"
+                                class="search-input"
+                                @keyup.enter="performFullSearch"
+                            >
+                            <button @click="performFullSearch">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            
+                            <!-- results list shown in dropdown -->
+                            <div v-if="showSearchDropdown && searchQuery.length > 0" class="search-dropdown">
+                            
+                                <div v-if="searching" class="search-loading">
+                                    <i class="fas fa-spinner fa-spin"></i> Searching...
+                                </div>
+                                
+                           
+                                <div v-else-if="searchResults.length === 0 && !searching" class="search-no-results">
+                                    No activities found for "{{ searchQuery }}"
+                                </div>
+                                
+                             
+                                <div v-else class="search-results-list">
+                                    <div 
+                                        v-for="activity in searchResults" 
+                                        :key="activity._id"
+                                        class="search-result-item"
+                                        @mousedown="onSearchResultClick(activity)"
+                                    >
+                                        <img 
+                                        :src="activity.imageUrl[0]" 
+                                        :alt="activity.topic" 
+                                        class="search-result-image"
+                                        >
+                                        <div class="search-result-info">
+                                            <div class="search-result-title">{{ activity.topic }}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="d-flex align-items-center">
+                        <button class="icon-btn" 
+                                @click="currentPage = (currentPage === 'cart' && cartItems > 0) ? 'home' : 'cart'" 
+                                :disabled="cartItems === 0">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge-custom" v-if="cartItems > 0">{{ cartItems }}</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!--Mobile Search -->
+                <div class="d-md-none mt-3">
+                    <div class="navbar-search">
+                        <input 
+                                type="text" 
+                                placeholder="Search activities..."
+                                v-model="searchQuery"
+                                @input="onSearchInput"
+                                @blur="onSearchBlur"
+                                @focus="onSearchFocus"
+                                class="search-input"
+                                @keyup.enter="performFullSearch"
+                            >
+                            <button @click="performFullSearch">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        
+                            <div v-if="showSearchDropdown && searchQuery.length > 0" class="search-dropdown">
+                            
+                                <div v-if="searching" class="search-loading">
+                                    <i class="fas fa-spinner fa-spin"></i> Searching...
+                                </div>
+                                
+                           
+                                <div v-else-if="searchResults.length === 0 && !searching" class="search-no-results">
+                                    No activities found for "{{ searchQuery }}"
+                                </div>
+                                
+                                <div v-else class="search-results-list">
+                                    <div 
+                                        v-for="activity in searchResults" 
+                                        :key="activity._id"
+                                        class="search-result-item"
+                                        @mousedown="onSearchResultClick(activity)"
+                                    >
+                                        <img 
+                                        :src="activity.imageUrl[0]" 
+                                        :alt="activity.topic" 
+                                        class="search-result-image"
+                                        >
+                                        <div class="search-result-info">
+                                            <div class="search-result-title">{{ activity.topic }}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home Page -->
+        <div v-if="currentPage === 'home'">
+
+            <div class="hero-section">
+                <div class="hero-slide" :class="{ active: currentSlide === 0 }" style="background-image: url('/hero1.jpg');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Discover Your Passion</h1>
+                            <p class="hero-subtitle fade-in-up">Join thousands of students learning new skills every day</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Explore Activities</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" :class="{ active: currentSlide === 1 }" style="background-image: url('/hero2.jpg');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Expert Instructors</h1>
+                            <p class="hero-subtitle fade-in-up">Learn from the best in a supportive environment</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Browse Classes</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" :class="{ active: currentSlide === 2 }" style="background-image: url('/hero3.jpeg');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <h1 class="hero-title fade-in-up">Build Your Future</h1>
+                            <p class="hero-subtitle fade-in-up">Develop skills that will last a lifetime</p>
+                            <button class="hero-btn fade-in-up" @click="currentPage = 'activities'">Get Started</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-dots">
+                    <div class="hero-dot" :class="{ active: currentSlide === 0 }" @click="currentSlide = 0"></div>
+                    <div class="hero-dot" :class="{ active: currentSlide === 1 }" @click="currentSlide = 1"></div>
+                    <div class="hero-dot" :class="{ active: currentSlide === 2 }" @click="currentSlide = 2"></div>
+                </div>
+            </div>
+
+             <!-- Benefits Section -->
+            <section id="benefits" class="benefits-section">
+                <div class="container">
+                    <h1 class="section-title">Why Parents Choose Ru Academy</h1>
+                    <p class="section-subtitle">
+                        We provide a nurturing environment where every child can thrive, explore, and grow
+                    </p>
+                    
+                    <div class="row">
+                        <!-- Benefit 1 -->
+                        <div class="col-md-4 mb-4">
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <h3 class="benefit-title">Quality-Focused Teaching</h3>
+                                <p class="benefit-description">
+                                    Our certified instructors bring years of experience and passion to every workshop, 
+                                    ensuring your child receives the best guidance in a fun, supportive environment.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 2 -->
+                        <div class="col-md-4 mb-4">
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3 class="benefit-title">Personalised Small Groups</h3>
+                                <p class="benefit-description">
+                                    With a maximum of 15 students per class, we guarantee personalized attention 
+                                    and meaningful interaction, helping each child build confidence and friendships.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 3 -->
+                        <div class="col-md-4 mb-4">
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <h3 class="benefit-title">Active Learning Environment</h3>
+                                <p class="benefit-description">
+                                    From robotics to art, coding to dance, our interactive workshops engage children 
+                                    in practical learning that sparks creativity and builds real-world skills.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <div class="container my-4">
+               
+                <div class="category-pills">
+                    <div class="category-pill" :class="{ active: selectedCategory === 'all' }" @click="filterByCategory('all')">
+                        <i class="fas fa-th"></i> All
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Sports & Games' }" @click="filterByCategory('Sports & Games')">
+                        <i class="fas fa-basketball-ball"></i> Sports
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Music' }" @click="filterByCategory('Music')">
+                        <i class="fas fa-music"></i> Music
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Art & Craft' }" @click="filterByCategory('Art & Craft')">
+                        <i class="fas fa-palette"></i> Art & Craft
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'STEM' }" @click="filterByCategory('STEM')">
+                        <i class="fas fa-robot"></i> STEM
+                    </div>
+                    <div class="category-pill" :class="{ active: selectedCategory === 'Languages' }" @click="filterByCategory('Languages')">
+                        <i class="fas fa-language"></i> Languages
+                    </div>
+                </div>
+
+                <!-- Featured Activities -->
+                <div class="mb-5">
+                    <h2 class="mb-4">Featured Activities</h2>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-5 col-sm-6" v-for="(activity, index) in Activities" :key="index">
+                            <div class="product-card fade-in-up" :style="{ animationDelay: index * 0.1 + 's' }" @click="viewActivity(activity)">
+                                <div class="product-image-container">
+                                    <img :src="activity.imageUrl[0]" :alt="activity.topic" class="product-image" >
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title">{{ activity.topic }}</h5>
+                                    <div class="product-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ activity.location }}
+                                    </div>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i v-for="n in 5" :key="n" :class="n <= activity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                                        </div>
+                                        <span class="rating-count">({{ activity.rating }})</span>
+                                    </div>
+                                    <div class="product-price-row">
+                                        <div>
+                                            <span class="product-price">${{ activity.price }}</span>
+                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                        </div>
+                                        <span class="product-stock">{{ activity.spaces }} spots</span>
+                                    </div>
+                                    <button class="add-to-cart-btn" @click="viewActivity(activity)">
+                                        <i class="fas fa-eye"></i> View Activity
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activities/Search Results Page -->
+        <div v-if="currentPage === 'activities' || currentPage === 'search'" class="container my-4">
+            <div class="row">
+                <!-- Filter Sidebar -->
+                <div class="col-lg-3">
+                    <div class="filter-sidebar">
+                        <div class="filter-title">
+                            <span>Filters</span>
+                            <span class="filter-reset" @click="resetFilters">Reset</span>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Category</div>
+                            <div class="filter-option" v-for="category in categories" :key="category.value">
+                                <input type="checkbox" :id="category.value" v-model="filters.categories" :value="category.value">
+                                <label :for="category.value">{{ category.label }}</label>
+                            </div>
+                        </div>
+                        <hr>
+
+                        <!-- Location Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Location</div>
+                            <div class="filter-option" v-for="location in locations" :key="location">
+                                <input type="checkbox" :id="location" v-model="filters.locations" :value="location">
+                                <label :for="location">{{ location }}</label>
+                            </div>
+                        </div>
+                        <hr>
+
+                        <!-- Seats Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Number of Seats</div>
+                            <div class="price-range">
+                                <div class="price-inputs">
+                                    <input type="number" class="price-input" placeholder="Minimum Seats" v-model="filters.minSpaces">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+
+                        <!-- Price Range -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Price Range</div>
+                            <div class="price-range">
+                                <input type="range" class="form-range" min="0" max="300" v-model="filters.maxPrice">
+                                <div class="price-inputs">
+                                    <input type="number" class="price-input" placeholder="Min" v-model="filters.minPrice">
+                                    <input type="number" class="price-input" placeholder="Max" v-model="filters.maxPrice">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+
+                        <!-- Availability Filter -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">Days</div>
+                            <div class="filter-option" v-for="dayOption in days" :key="dayOption.label">
+                                <input 
+                                    type="radio" 
+                                    :id="'days-' + dayOption.label" 
+                                    v-model="filters.selectedDays" 
+                                    :value="dayOption.label" 
+                                    name="days-filter"
+                                >
+                                <label :for="'days-' + dayOption.label">{{ dayOption.label }}</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Activities Grid -->
+                <div class="col-lg-9" id="results-section">
+                    <div class="sort-container">
+                        <span class="text-secondary">{{ filteredActivities.length }} results</span>
+                        <select class="sort-select" v-model="sortBy">
+                            <option value="featured">Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating">Highest Rated</option>
+                        </select>
+                    </div>
+
+                    <!-- Activities Grid -->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6" v-for="(activity, index) in sortedActivities" :key="activity._id || index">
+                            <div class="product-card" @click="viewActivity(activity)">
+                                <div class="product-image-container">
+                                    <img :src="activity.imageUrl[0]" :alt="activity.topic" class="product-image">
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-title">{{ activity.topic }}</h5>
+                                    <div class="product-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ activity.location }}
+                                    </div>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i v-for="n in 5" :key="n" 
+                                            :class="n <= activity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                                        </div>
+                                        <span class="rating-count">({{ activity.rating }})</span>
+                                    </div>
+                                    <div class="product-price-row">
+                                        <div>
+                                            <span class="product-price">${{ activity.price }}</span>
+                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                        </div>
+                                        <span class="product-stock">{{ activity.spaces }} spots</span>
+                                    </div>
+                                    <button class="add-to-cart-btn" 
+                                            @click.stop="addToCart(activity)" 
+                                            :disabled="activity.spaces === 0" 
+                                            :class="{ 'disabled-btn': activity.spaces === 0 }">
+                                        <i class="fas fa-shopping-cart"></i> 
+                                        {{ activity.spaces === 0 ? 'No Seats Available' : 'Enroll Now' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- No Results Message -->
+                    <div v-if="useSearchResults && sortedActivities.length === 0 && !searching" class="text-center py-5">
+                        <i class="fas fa-search" style="font-size: 3rem; color: #ccc;"></i>
+                        <h4 class="mt-3">No activities found</h4>
+                        <p class="text-muted">No results found for "{{ searchQuery }}"</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Individual Activity Page -->
+        <div v-if="currentPage === 'activity-detail'" class="container my-5">
+            <button class="btn btn-outline-secondary mb-4" @click="currentPage = 'activities'">
+                <i class="fas fa-arrow-left"></i> Back to Activities
+            </button>
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="image-gallery">
+                        <div class="gallery-main">
+                            <img :src="selectedImage" alt="Activity">
+                        </div>
+                    </div>
+                    <div class="gallery-thumbnails">
+                            <div class="thumbnail" :class="{ active: selectedImage === image }" v-for="(image, index) in activityImages" :key="index" @click="selectedImage = image">
+                                <img :src="image" alt="Thumbnail">
+                            </div>
+                        </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="profile-section">
+                        <h1 class="mb-3">{{ selectedActivity.topic }}</h1>
+                        <div class="product-location mb-3" style="font-size: 1.1rem;">
+                            <i class="fas fa-map-marker-alt"></i> {{ selectedActivity.location }}
+                        </div>
+                        <div class="product-rating mb-4">
+                            <div class="stars" style="font-size: 1.2rem;">
+                                <i v-for="n in 5" :key="n" :class="n <= selectedActivity.rating ? 'fas fa-star' : 'far fa-star'"></i>
+                            </div>
+                            <span class="rating-count" style="font-size: 1rem;">({{ selectedActivity.rating }} reviews)</span>
+                        </div>
+                        <div class="mb-4">
+                            <span class="product-price" style="font-size: 2.5rem;">${{ selectedActivity.price }}</span>
+                            <span class="product-price-old" style="font-size: 1.5rem;" v-if="selectedActivity.oldPrice">${{ selectedActivity.oldPrice }}</span>
+                            <span class="text-secondary ms-2">/session</span>
+                        </div>
+                        <div class="mb-4">
+                            <span class="badge bg-success px-3 py-2" style="background-color: #10B981 !important;">
+                                <i class="fas fa-check-circle"></i> {{ selectedActivity.spaces }} spots available
+                            </span>
+                        </div>
+                        <button class="add-to-cart-btn mb-4" style="font-size: 1.2rem; padding: 1.25rem;" @click="addToCart(selectedActivity)">
+                            <i class="fas fa-shopping-cart"></i> Enroll Now
+                        </button>
+                        
+                        <div class="section-title mt-5">About This Activity</div>
+                        <p class="text-secondary">{{ selectedActivity.description }}</p>
+                        
+                        <div class="section-title mt-4">What is Included</div>
+                        <ul class="text-secondary">
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>Professional instruction</li>
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>All necessary equipment</li>
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>Progress tracking</li>
+                            <li class="mb-2"><i class="fas fa-check me-2" style="color: #10B981;"></i>Certificate upon completion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Page -->
+        <div v-if="currentPage === 'cart'" class="container my-5">
+            <h2 class="mb-4">Shopping Cart ({{ cart.length }} items)</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div v-if="cart.length === 0" class="text-center py-5">
+                        <i class="fas fa-shopping-cart" style="font-size: 1.9rem; color: var(--text-secondary);"></i>
+                        <h3 class="mt-4">Your cart is currently empty</h3>
+                        <p class="text-secondary">Start adding some activities</p>
+                        <button class="checkout-btn" style="max-width: 300px;" @click="currentPage = 'home'">
+                            Browse Activities
+                        </button>
+                    </div>
+                    
+                    <div v-for="(item, index) in cart" :key="item.index" class="cart-item">
+                        <img :src="item.imageUrl[0]" :alt="item.topic" class="cart-item-image">
+                        <div class="cart-item-details">
+                            <h5 class="mb-2">{{ item.topic }}</h5>
+                            <div class="product-location mb-2">
+                                <i class="fas fa-map-marker-alt"></i> {{ item.location }}
+                            </div>
+                            <div class="product-price mb-3">${{ item.price }}</div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" @click="decreaseQuantity(index)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="fw-bold">{{ item.quantity }}</span>
+                                    <button class="quantity-btn" @click="increaseQuantity(index)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="remove-btn" @click="removeFromCart(index)">
+                                    <i class="fas fa-trash"></i> Remove
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="product-price">${{ (item.price * item.quantity).toFixed(2) }}</div>
+                        </div>
+                    </div>
+
+                      <div class="checkout-section">
+                        <div class="section-header">
+                            <div>
+                                <h5 class="mb-1">Delivery Info</h5>
+                                <p class="text-secondary mb-0">Enter your details</p>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="form-group">
+                                <input type="text" class="form-input" placeholder="Full Name" 
+                                v-model="checkout.name"
+                                @input="validateAllFields"
+                                @blur="validateAllFields"
+                                :class="{ 
+                                    'is-valid': nameValid && checkout.name.length > 0,
+                                    'is-invalid': !nameValid && checkout.name.length > 0 
+                                }"
+                                >
+                                <div v-if="!nameValid && checkout.name.length > 0" class="error-message">
+                                    Your fullname must contain letters and spaces only
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-input" placeholder="Email Address" 
+                                 v-model="checkout.email"
+                                @input="validateAllFields"
+                                @blur="validateAllFields"
+                                :class="{ 
+                                    'is-valid': emailValid && checkout.email.length > 0,
+                                    'is-invalid': !emailValid && checkout.email.length > 0 
+                                }"
+                                >
+                                <div v-if="!emailValid && checkout.email.length > 0" class="error-message">
+                                    Please enter a valid email address
+                                </div>
+                            </div>
+                           <div class="form-group">
+                                <input type="tel" class="form-input" placeholder="Phone Number" 
+                               v-model="checkout.phone"
+                                @input="validateAllFields"
+                                @blur="validateAllFields"
+                                :class="{ 
+                                    'is-valid': phoneValid && checkout.phone.length > 0,
+                                    'is-invalid': !phoneValid && checkout.phone.length > 0 
+                                }"
+                                >
+                                <div v-if="!phoneValid && checkout.phone.length > 0" class="error-message">
+                                    Phone must contain only 8 digits
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="order-summary">
+                        <h4 class="mb-4">Order Summary</h4>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>${{ cartSubtotal.toFixed(2) }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Service Fee</span>
+                            <span>${{ serviceFee.toFixed(2) }}</span>
+                        </div>
+                        <div class="summary-row" style="border: none;">
+                            <span class="fw-bold">Total</span>
+                            <span class="summary-total">${{ cartTotal.toFixed(2) }}</span>
+                        </div>
+
+                        <button class="checkout-btn" @click="processCheckout" :disabled="!isCheckoutValid">
+                            Complete checkout
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+        <div class="container">
+            <!-- Brand & Description -->
+            <div class="footer-section">
+                <a href="#" class="navbar-brand">
+                    <i class="fas fa-graduation-cap"></i> RU Academy
+                </a>
+                <p class="footer-description">
+                    Empowering students with quality after-school education and activities. 
+                    Join thousands of learners discovering their passion.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <div class="footer-title">Quick Links</div>
+                <div class="footer-links">
+                    <a href="#home" class="footer-link" @click="currentPage = 'home'">Home</a>
+                    <a href="#activities" class="footer-link"  @click="currentPage = 'activities'">Activities</a>
+                </div>
+            </div>
+
+            <!-- Social Icons -->
+            <div class="social-icons">
+                <a href="#" class="social-icon" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-icon" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-icon" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="social-icon" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>
+                    &copy; 2025 RU Academy
+                </p>
+            </div>
+        </div>
+        </footer>
+
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" @click="toggleTheme">
+            <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+        </button>
+    </div>
+   <script src="app.js"></script>
+</body>
+</html>
