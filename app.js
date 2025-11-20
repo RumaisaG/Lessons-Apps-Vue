@@ -73,6 +73,9 @@ let lessonApp = new Vue({
                         phone: '',
                         email: ''
                 },
+
+
+                serverBaseUrl: "https://express-lessons-api.onrender.com/"
             },
             
            
@@ -164,7 +167,7 @@ let lessonApp = new Vue({
             
             methods: {
                 fetchActivities() {
-                    return fetch("http://localhost:3000/api/lessons")
+                    return fetch(`${serverBaseUrl}api/lessons`)
                         .then(response => response.json())
                         .then(data => {
                             this.Activities = data;
@@ -199,7 +202,7 @@ let lessonApp = new Vue({
                     return;
                 }
                 
-                fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(this.searchQuery)}`)
+                fetch(`${serverBaseUrl}api/search?q=${encodeURIComponent(this.searchQuery)}`)
                     .then(response => response.json())
                     .then(activity => {
                   
@@ -226,7 +229,7 @@ let lessonApp = new Vue({
                 this.searching = true;
                 this.useSearchResults = true;
                 
-                fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(this.searchQuery)}`)
+                fetch(`${serverBaseUrl}api/search?q=${encodeURIComponent(this.searchQuery)}`)
                     .then(response => response.json())
                     .then(data => {
                         this.fullSearchResults = data || [];
@@ -320,7 +323,7 @@ let lessonApp = new Vue({
                 };
              
                 
-                return fetch('http://localhost:3000/api/orders', {
+                return fetch(`${serverBaseUrl}api/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -342,7 +345,7 @@ let lessonApp = new Vue({
                 const newSpaces = item.spaces - item.quantity;
                 
                 const updateData = { spaces: newSpaces };
-                return fetch(`http://localhost:3000/api/lessons/${item._id}`, {
+                return fetch(`${serverBaseUrl}api/lessons/${item._id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
