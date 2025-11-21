@@ -1,6 +1,8 @@
 let lessonApp = new Vue({
             el: '#app',
             data: {
+
+                serverBaseUrl: "https://express-lessons-api.onrender.com/",
                 // to move from different pages
                 currentPage: 'home',
                 isDarkMode: false,
@@ -75,7 +77,7 @@ let lessonApp = new Vue({
                 },
 
 
-                serverBaseUrl: "https://express-lessons-api.onrender.com/"
+              
             },
             
            
@@ -167,7 +169,7 @@ let lessonApp = new Vue({
             
             methods: {
                 fetchActivities() {
-                    return fetch(`${serverBaseUrl}api/lessons`)
+                    return fetch(`${this.serverBaseUrl}api/lessons`)
                         .then(response => response.json())
                         .then(data => {
                             this.Activities = data;
@@ -202,7 +204,7 @@ let lessonApp = new Vue({
                     return;
                 }
                 
-                fetch(`${serverBaseUrl}api/search?q=${encodeURIComponent(this.searchQuery)}`)
+                fetch(`${this.serverBaseUrl}api/search?q=${encodeURIComponent(this.searchQuery)}`)
                     .then(response => response.json())
                     .then(activity => {
                   
@@ -229,7 +231,7 @@ let lessonApp = new Vue({
                 this.searching = true;
                 this.useSearchResults = true;
                 
-                fetch(`${serverBaseUrl}api/search?q=${encodeURIComponent(this.searchQuery)}`)
+                fetch(`${this.serverBaseUrl}api/search?q=${encodeURIComponent(this.searchQuery)}`)
                     .then(response => response.json())
                     .then(data => {
                         this.fullSearchResults = data || [];
@@ -323,7 +325,7 @@ let lessonApp = new Vue({
                 };
              
                 
-                return fetch(`${serverBaseUrl}api/orders`, {
+                return fetch(`${this.serverBaseUrl}api/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -345,7 +347,7 @@ let lessonApp = new Vue({
                 const newSpaces = item.spaces - item.quantity;
                 
                 const updateData = { spaces: newSpaces };
-                return fetch(`${serverBaseUrl}api/lessons/${item._id}`, {
+                return fetch(`${this.serverBaseUrl}api/lessons/${item._id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
