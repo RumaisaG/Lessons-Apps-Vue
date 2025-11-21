@@ -93,7 +93,7 @@
                                         @mousedown="onSearchResultClick(activity)"
                                     >
                                         <img 
-                                        :src="activity.imageUrl[0]" 
+                                        :src="`${imageServerBaseUrl}${activity.imageUrl[0]}`"
                                         :alt="activity.topic" 
                                         class="search-result-image"
                                         >
@@ -154,7 +154,7 @@
                                         @mousedown="onSearchResultClick(activity)"
                                     >
                                         <img 
-                                        :src="activity.imageUrl[0]" 
+                                        :src="`${imageServerBaseUrl}${activity.imageUrl[0]}`" 
                                         :alt="activity.topic" 
                                         class="search-result-image"
                                         >
@@ -174,7 +174,7 @@
         <div v-if="currentPage === 'home'">
 
             <div class="hero-section">
-                <div class="hero-slide" :class="{ active: currentSlide === 0 }" style="background-image: url('images/hero1.jpg');">
+                <div class="hero-slide" :class="{ active: currentSlide === 0 }" :style="background-image: url(`${imageServerBaseUrl}hero1.jpg`);">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Discover Your Passion</h1>
@@ -183,7 +183,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-slide" :class="{ active: currentSlide === 1 }" style="background-image: url('images/hero2.jpg');">
+                <div class="hero-slide" :class="{ active: currentSlide === 1 }" :style="background-image: url(`${imageServerBaseUrl}hero2.jpg`);">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Expert Instructors</h1>
@@ -192,7 +192,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-slide" :class="{ active: currentSlide === 2 }" style="background-image: url('images/hero3.jpeg');">
+                <div class="hero-slide" :class="{ active: currentSlide === 2 }" :style="background-image: url(`${imageServerBaseUrl}hero3.jpeg`);">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Build Your Future</h1>
@@ -293,7 +293,7 @@
                         <div class="col-lg-3 col-md-5 col-sm-6" v-for="(activity, index) in Activities" :key="index">
                             <div class="product-card fade-in-up" :style="{ animationDelay: index * 0.1 + 's' }" @click="viewActivity(activity)">
                                 <div class="product-image-container">
-                                    <img :src="activity.imageUrl[0]" :alt="activity.topic" class="product-image" >
+                                    <img :src="`${imageServerBaseUrl}${activity.imageUrl[0]}`" :alt="activity.topic" class="product-image" >
                                 </div>
                                 <div class="product-info">
                                     <h5 class="product-title">{{ activity.topic }}</h5>
@@ -414,7 +414,7 @@
                         <div class="col-lg-4 col-md-6" v-for="(activity, index) in sortedActivities" :key="activity._id || index">
                             <div class="product-card" @click="viewActivity(activity)">
                                 <div class="product-image-container">
-                                    <img :src="activity.imageUrl[0]" :alt="activity.topic" class="product-image">
+                                    <img :src="`${imageServerBaseUrl}${activity.imageUrl[0]}`" :alt="activity.topic" class="product-image">
                                 </div>
                                 <div class="product-info">
                                     <h5 class="product-title">{{ activity.topic }}</h5>
@@ -466,12 +466,12 @@
                 <div class="col-lg-7">
                     <div class="image-gallery">
                         <div class="gallery-main">
-                            <img :src="selectedImage" alt="Activity">
+                            <img :src="`${imageServerBaseUrl}${selectedImage}`" alt="Activity">
                         </div>
                     </div>
                     <div class="gallery-thumbnails">
                             <div class="thumbnail" :class="{ active: selectedImage === image }" v-for="(image, index) in activityImages" :key="index" @click="selectedImage = image">
-                                <img :src="image" alt="Thumbnail">
+                                <img :src="`${imageServerBaseUrl}${selectedImage}`" alt="Thumbnail">
                             </div>
                         </div>
                 </div>
@@ -531,7 +531,7 @@
                     </div>
                     
                     <div v-for="(item, index) in cart" :key="item.index" class="cart-item">
-                        <img :src="item.imageUrl[0]" :alt="item.topic" class="cart-item-image">
+                        <img :src="`${imageServerBaseUrl}${item.imageUrl[0]}`" :alt="item.topic" class="cart-item-image">
                         <div class="cart-item-details">
                             <h5 class="mb-2">{{ item.topic }}</h5>
                             <div class="product-location mb-2">

@@ -3,6 +3,8 @@ let lessonApp = new Vue({
             data: {
 
                 serverBaseUrl: "https://express-lessons-api.onrender.com/",
+                imageServerBaseUrl : "https://express-lessons-api.onrender.com/images/",
+                
                 // to move from different pages
                 currentPage: 'home',
                 isDarkMode: false,
