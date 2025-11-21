@@ -50,6 +50,7 @@ The system allows users to browse lessons, view details, add items to a shopping
 ## Project Structure
 - index.html
 - style.css
+- app.js
 
 ## Live Demo Page
 You can view the live deployed version of the project on the following link :
