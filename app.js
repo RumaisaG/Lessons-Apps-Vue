@@ -122,6 +122,10 @@ let lessonApp = new Vue({
             let activities = [...this.filteredActivities];
                     
             switch(this.sortBy) {
+                case 'name-asc':
+                    return activities.sort((a, b) => a.topic.localeCompare(b.topic));
+                case 'name-desc':
+                    return activities.sort((a, b) => b.topic.localeCompare(a.topic));
                 case 'price-asc':
                     return activities.sort((a, b) => a.price - b.price);
                 case 'price-desc':
