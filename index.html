@@ -17,9 +17,8 @@
 <body>
    
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
     <div id="app">
-        <!-- Sidebar Menu -->
+        <!-- the sidebar menu -->
         <div class="sidebar-menu" id="sidebarMenu">
             <button class="sidebar-close" @click="closeSidebar">
                 <i class="fas fa-times"></i>
@@ -58,9 +57,7 @@
                     <!-- the search bar section -->
                     <div class="d-none d-md-block flex-grow-1 mx-4" style="max-width: 500px;">
                         <div class="navbar-search">
-                            <input 
-                                type="text" 
-                                placeholder="Search activities..."
+                            <input type="text" placeholder="Search for your activities..."
                                 v-model="searchQuery"
                                 @input="onSearchInput"
                                 @blur="onSearchBlur"
@@ -76,30 +73,16 @@
                             <div v-if="showSearchDropdown && searchQuery.length > 0" class="search-dropdown">
                             
                                 <div v-if="searching" class="search-loading">
-                                    <i class="fas fa-spinner fa-spin"></i> Searching...
+                                    <i class="fas fa-spinner fa-spin"></i> Searching....
                                 </div>
-                                
-                           
                                 <div v-else-if="searchResults.length === 0 && !searching" class="search-no-results">
-                                    No activities found for "{{ searchQuery }}"
+                                    No activities found for "{{searchQuery}}"
                                 </div>
-                                
-                             
                                 <div v-else class="search-results-list">
-                                    <div 
-                                        v-for="activity in searchResults" 
-                                        :key="activity._id"
-                                        class="search-result-item"
-                                        @mousedown="onSearchResultClick(activity)"
-                                    >
-                                        <img 
-                                        :src="`${imageServerBaseUrl}${activity.imageUrl[0]}`"
-                                        :alt="activity.topic" 
-                                        class="search-result-image"
-                                        >
+                                    <div v-for="activity in searchResults" :key="activity._id" class="search-result-item" @mousedown="onSearchResultClick(activity)">
+                                        <img :src="`${imageServerBaseUrl}${activity.imageUrl[0]}`" :alt="activity.topic" class="search-result-image">
                                         <div class="search-result-info">
                                             <div class="search-result-title">{{ activity.topic }}</div>
-                                            
                                         </div>
                                     </div>
                                 </div>
@@ -107,10 +90,9 @@
                         </div>
                     </div>
 
-                    
                     <div class="d-flex align-items-center">
                         <button class="icon-btn" 
-                                @click="currentPage = (currentPage === 'cart' && cartItems > 0) ? 'home' : 'cart'" 
+                                @click="currentPage = (currentPage === 'cart' && cartItems > 0) ? 'activities' : 'cart'" 
                                 :disabled="cartItems === 0">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="badge-custom" v-if="cartItems > 0">{{ cartItems }}</span>
@@ -174,7 +156,7 @@
         <div v-if="currentPage === 'home'">
 
             <div class="hero-section">
-                <div class="hero-slide" :class="{ active: currentSlide === 0 }" style="background-image: url(`${imageServerBaseUrl}hero1.jpg`);">
+                <div class="hero-slide" :class="{ active: currentSlide === 0 }" :style="{ backgroundImage: `url(${imageServerBaseUrl}hero1.jpg)` }">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Discover Your Passion</h1>
@@ -183,7 +165,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-slide" :class="{ active: currentSlide === 1 }" style="background-image: url(`${imageServerBaseUrl}hero2.jpg`);">
+                <div class="hero-slide" :class="{ active: currentSlide === 1 }" :style="{ backgroundImage: `url(${imageServerBaseUrl}hero2.jpg)` }">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Expert Instructors</h1>
@@ -192,7 +174,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-slide" :class="{ active: currentSlide === 2 }" style="background-image: url(`${imageServerBaseUrl}hero3.jpeg`);">
+                <div class="hero-slide" :class="{ active: currentSlide === 2 }" :style="{ backgroundImage: `url(${imageServerBaseUrl}hero3.jpeg)` }">
                     <div class="hero-content">
                         <div class="container">
                             <h1 class="hero-title fade-in-up">Build Your Future</h1>
@@ -308,8 +290,7 @@
                                     </div>
                                     <div class="product-price-row">
                                         <div>
-                                            <span class="product-price">${{ activity.price }}</span>
-                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                            <span class="product-price">£{{ activity.price }}</span>
                                         </div>
                                         <span class="product-stock">{{ activity.spaces }} spots</span>
                                     </div>
@@ -383,24 +364,17 @@
                         <div class="filter-section">
                             <div class="filter-section-title">Days</div>
                             <div class="filter-option" v-for="dayOption in days" :key="dayOption.label">
-                                <input 
-                                    type="radio" 
-                                    :id="'days-' + dayOption.label" 
-                                    v-model="filters.selectedDays" 
-                                    :value="dayOption.label" 
-                                    name="days-filter"
-                                >
+                                <input type="radio" :id="'days-' + dayOption.label" v-model="filters.selectedDays" :value="dayOption.label" name="days-filter">
                                 <label :for="'days-' + dayOption.label">{{ dayOption.label }}</label>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
                 <!-- Activities Grid -->
                 <div class="col-lg-9" id="results-section">
                     <div class="sort-container">
-                        <span class="text-secondary">{{ filteredActivities.length }} results</span>
+                        <span class="text-secondary">{{filteredActivities.length}} results</span>
                         <select class="sort-select" v-model="sortBy">
                             <option value="featured">Featured</option>
                             <option value="price-asc">Price: Low to High</option>
@@ -411,48 +385,44 @@
 
                     <!-- Activities Grid -->
                     <div class="row">
-                        <div class="col-lg-4 col-md-6" v-for="(activity, index) in sortedActivities" :key="activity._id || index">
+                        <div class="col-lg-4 col-md-6" v-for="(activity, index) in sortedActivities" :key="activity._id">
                             <div class="product-card" @click="viewActivity(activity)">
                                 <div class="product-image-container">
                                     <img :src="`${imageServerBaseUrl}${activity.imageUrl[0]}`" :alt="activity.topic" class="product-image">
                                 </div>
                                 <div class="product-info">
-                                    <h5 class="product-title">{{ activity.topic }}</h5>
+                                    <h5 class="product-title">{{activity.topic}}</h5>
                                     <div class="product-location">
-                                        <i class="fas fa-map-marker-alt"></i> {{ activity.location }}
+                                        <i class="fas fa-map-marker-alt"></i> {{activity.location}}
                                     </div>
                                     <div class="product-rating">
                                         <div class="stars">
                                             <i v-for="n in 5" :key="n" 
                                             :class="n <= activity.rating ? 'fas fa-star' : 'far fa-star'"></i>
                                         </div>
-                                        <span class="rating-count">({{ activity.rating }})</span>
+                                        <span class="rating-count">({{activity.rating}})</span>
                                     </div>
                                     <div class="product-price-row">
                                         <div>
-                                            <span class="product-price">${{ activity.price }}</span>
-                                            <span class="product-price-old" v-if="activity.oldPrice">${{ activity.oldPrice }}</span>
+                                            <span class="product-price">£{{activity.price}}</span>
                                         </div>
-                                        <span class="product-stock">{{ activity.spaces }} spots</span>
+                                        <span class="product-stock">{{activity.spaces}} spots</span>
                                     </div>
-                                    <button class="add-to-cart-btn" 
-                                            @click.stop="addToCart(activity)" 
-                                            :disabled="activity.spaces === 0" 
-                                            :class="{ 'disabled-btn': activity.spaces === 0 }">
+                                    <button class="add-to-cart-btn" @click.stop="addToCart(activity)" :disabled="activity.spaces === 0"
+                                        :class="{ 'disabled-btn': activity.spaces === 0 }">
                                         <i class="fas fa-shopping-cart"></i> 
-                                        {{ activity.spaces === 0 ? 'No Seats Available' : 'Enroll Now' }}
+                                        {{activity.spaces === 0 ? 'No Seats Left' : 'Enroll Now'}}
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- No Results Message -->
-                    <div v-if="useSearchResults && sortedActivities.length === 0 && !searching" class="text-center py-5">
+                    <div v-if="showSearchResults && sortedActivities.length === 0 && !searching" class="text-center py-5">
                         <i class="fas fa-search" style="font-size: 3rem; color: #ccc;"></i>
                         <h4 class="mt-3">No activities found</h4>
                         <p class="text-muted">No results found for "{{ searchQuery }}"</p>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -471,7 +441,7 @@
                     </div>
                     <div class="gallery-thumbnails">
                             <div class="thumbnail" :class="{ active: selectedImage === image }" v-for="(image, index) in activityImages" :key="index" @click="selectedImage = image">
-                                <img :src="`${imageServerBaseUrl}${selectedImage}`" alt="Thumbnail">
+                                <img :src="`${imageServerBaseUrl}${image}`" alt="Thumbnail">
                             </div>
                         </div>
                 </div>
@@ -485,19 +455,18 @@
                             <div class="stars" style="font-size: 1.2rem;">
                                 <i v-for="n in 5" :key="n" :class="n <= selectedActivity.rating ? 'fas fa-star' : 'far fa-star'"></i>
                             </div>
-                            <span class="rating-count" style="font-size: 1rem;">({{ selectedActivity.rating }} reviews)</span>
+                            <span class="rating-count" style="font-size: 1rem;">({{ selectedActivity.rating }})</span>
                         </div>
                         <div class="mb-4">
-                            <span class="product-price" style="font-size: 2.5rem;">${{ selectedActivity.price }}</span>
-                            <span class="product-price-old" style="font-size: 1.5rem;" v-if="selectedActivity.oldPrice">${{ selectedActivity.oldPrice }}</span>
-                            <span class="text-secondary ms-2">/session</span>
+                            <span class="product-price" style="font-size: 2.5rem;">£{{ selectedActivity.price }}</span>
+                            <span class="text-secondary" style="font-size: 1.2rem;">/session</span>
                         </div>
                         <div class="mb-4">
                             <span class="badge bg-success px-3 py-2" style="background-color: #10B981 !important;">
                                 <i class="fas fa-check-circle"></i> {{ selectedActivity.spaces }} spots available
                             </span>
                         </div>
-                        <button class="add-to-cart-btn mb-4" style="font-size: 1.2rem; padding: 1.25rem;" @click="addToCart(selectedActivity)">
+                        <button class="add-to-cart-btn mb-4" style="font-size: 1.2rem; padding: 1rem;" @click="addToCart(selectedActivity)">
                             <i class="fas fa-shopping-cart"></i> Enroll Now
                         </button>
                         
@@ -518,7 +487,7 @@
 
         <!-- Cart Page -->
         <div v-if="currentPage === 'cart'" class="container my-5">
-            <h2 class="mb-4">Shopping Cart ({{ cart.length }} items)</h2>
+            <h2 class="mb-4">Shopping Cart ({{cart.length}} items)</h2>
             <div class="row">
                 <div class="col-lg-8">
                     <div v-if="cart.length === 0" class="text-center py-5">
@@ -533,17 +502,17 @@
                     <div v-for="(item, index) in cart" :key="item.index" class="cart-item">
                         <img :src="`${imageServerBaseUrl}${item.imageUrl[0]}`" :alt="item.topic" class="cart-item-image">
                         <div class="cart-item-details">
-                            <h5 class="mb-2">{{ item.topic }}</h5>
+                            <h5 class="mb-2">{{item.topic}}</h5>
                             <div class="product-location mb-2">
-                                <i class="fas fa-map-marker-alt"></i> {{ item.location }}
+                                <i class="fas fa-map-marker-alt"></i> {{item.location}}
                             </div>
-                            <div class="product-price mb-3">${{ item.price }}</div>
+                            <div class="product-price mb-3">£{{item.price}}</div>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="quantity-controls">
                                     <button class="quantity-btn" @click="decreaseQuantity(index)">
                                         <i class="fas fa-minus"></i>
                                     </button>
-                                    <span class="fw-bold">{{ item.quantity }}</span>
+                                    <span class="fw-bold">{{item.quantity}}</span>
                                     <button class="quantity-btn" @click="increaseQuantity(index)">
                                         <i class="fas fa-plus"></i>
                                     </button>
@@ -554,7 +523,7 @@
                             </div>
                         </div>
                         <div class="text-end">
-                            <div class="product-price">${{ (item.price * item.quantity).toFixed(2) }}</div>
+                            <div class="product-price">£{{ (item.price * item.quantity).toFixed(2) }}</div>
                         </div>
                     </div>
 
@@ -567,10 +536,7 @@
                         </div>
                         <div class="mt-3">
                             <div class="form-group">
-                                <input type="text" class="form-input" placeholder="Full Name" 
-                                v-model="checkout.name"
-                                @input="validateAllFields"
-                                @blur="validateAllFields"
+                                <input type="text" class="form-input" placeholder="Full Name"  v-model="checkout.name"  @input="validateAllFields"   @blur="validateAllFields"
                                 :class="{ 
                                     'is-valid': nameValid && checkout.name.length > 0,
                                     'is-invalid': !nameValid && checkout.name.length > 0 
@@ -581,10 +547,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-input" placeholder="Email Address" 
-                                 v-model="checkout.email"
-                                @input="validateAllFields"
-                                @blur="validateAllFields"
+                                <input type="email" class="form-input" placeholder="Email Address" v-model="checkout.email" @input="validateAllFields" @blur="validateAllFields"
                                 :class="{ 
                                     'is-valid': emailValid && checkout.email.length > 0,
                                     'is-invalid': !emailValid && checkout.email.length > 0 
@@ -594,11 +557,8 @@
                                     Please enter a valid email address
                                 </div>
                             </div>
-                           <div class="form-group">
-                                <input type="tel" class="form-input" placeholder="Phone Number" 
-                               v-model="checkout.phone"
-                                @input="validateAllFields"
-                                @blur="validateAllFields"
+                            <div class="form-group">
+                                <input type="tel" class="form-input" placeholder="Phone Number" v-model="checkout.phone" @input="validateAllFields" @blur="validateAllFields"
                                 :class="{ 
                                     'is-valid': phoneValid && checkout.phone.length > 0,
                                     'is-invalid': !phoneValid && checkout.phone.length > 0 
@@ -617,23 +577,50 @@
                         <h4 class="mb-4">Order Summary</h4>
                         <div class="summary-row">
                             <span>Subtotal</span>
-                            <span>${{ cartSubtotal.toFixed(2) }}</span>
+                            <span>£{{cartSubtotal.toFixed(2)}}</span>
                         </div>
                         <div class="summary-row">
                             <span>Service Fee</span>
-                            <span>${{ serviceFee.toFixed(2) }}</span>
+                            <span>£{{serviceFee.toFixed(2)}}</span>
                         </div>
                         <div class="summary-row" style="border: none;">
                             <span class="fw-bold">Total</span>
-                            <span class="summary-total">${{ cartTotal.toFixed(2) }}</span>
+                            <span class="summary-total">£{{cartTotal.toFixed(2)}}</span>
                         </div>
-
                         <button class="checkout-btn" @click="processCheckout" :disabled="!isCheckoutValid">
                             Complete checkout
                         </button>
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- Order Confirmation -->
+        <div v-if="showConfirmation" class="confirmation-overlay">
+            <div class="confirmation-modal">
+                <div class="check-icon">✓</div>
+                <h2>Your Order Was Confirmed</h2>
+        
+                <div class="order-info">
+                    <div class="info-row">
+                        <span>Customer Name:</span>
+                        <strong>{{ orderConfirmation.name }}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Email Address:</span>
+                        <strong>{{ orderConfirmation.email }}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Phone Number:</span>
+                        <strong>{{ orderConfirmation.phone }}</strong>
+                    </div>
+                    <div class="info-row total">
+                        <span>Total:</span>
+                        <strong>£{{ orderConfirmation.total }}</strong>
+                    </div>
+                </div>
+                <button @click="closeConfirmation">Done</button>
             </div>
         </div>
 
@@ -650,7 +637,6 @@
                     Join thousands of learners discovering their passion.
                 </p>
             </div>
-
             <div class="footer-section">
                 <div class="footer-title">Quick Links</div>
                 <div class="footer-links">
@@ -658,8 +644,6 @@
                     <a href="#activities" class="footer-link"  @click="currentPage = 'activities'">Activities</a>
                 </div>
             </div>
-
-            <!-- Social Icons -->
             <div class="social-icons">
                 <a href="#" class="social-icon" aria-label="Facebook">
                     <i class="fab fa-facebook-f"></i>
@@ -674,8 +658,6 @@
                     <i class="fab fa-youtube"></i>
                 </a>
             </div>
-
-            <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <p>
                     &copy; 2025 RU Academy
