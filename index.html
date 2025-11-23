@@ -597,6 +597,13 @@
 
             </div>
         </div>
+        <!-- Loader Overlay - shows during processing -->
+        <div v-if="isLoading" class="loader-overlay">
+            <div class="loader-container">
+                <div class="loader-spinner"></div>
+                <p class="loader-text">{{ loadingText }}</p>
+            </div>
+        </div>
 
         <!-- Order Confirmation -->
         <div v-if="showConfirmation" class="confirmation-overlay">

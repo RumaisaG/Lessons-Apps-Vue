@@ -2,7 +2,7 @@ let lessonApp = new Vue({
     el: '#app',
     data: {
         //imageServerBaseUrl:"http://localhost:3000/images/",
-       // serverBaseUrl: "http://localhost:3000/",
+       //serverBaseUrl: "http://localhost:3000/",
 
         serverBaseUrl: "https://express-lessons-api.onrender.com/",
         imageServerBaseUrl : "https://express-lessons-api.onrender.com/images/",
@@ -65,6 +65,9 @@ let lessonApp = new Vue({
         // to store user's checkout details
         checkout: {name: '',email: '',phone: ''},
 
+
+        isLoading: false,
+        loadingText: 'Processing your order...',
         // for showing the order confirmation box 
         showConfirmation: false,
         orderConfirmation: {name: '',phone: '',total: 0,email: ''},
@@ -162,6 +165,7 @@ let lessonApp = new Vue({
     },
             
     methods: {
+        // to fetch all the lessons from the backend
         fetchActivities() {
             return fetch(`${this.serverBaseUrl}api/lessons`)
                 .then(response => response.json())
@@ -173,7 +177,7 @@ let lessonApp = new Vue({
                     console.error("there has been an error fetching activities:", error);
                 });
         },
-        // 
+        // for the category filter on the home page
         filterByCategory(category) {
             this.selectedCategory = category;
             if (category === 'all') {
@@ -390,18 +394,26 @@ let lessonApp = new Vue({
                     alert('Your cart is empty.');
                     return;
             }
+
+            // show loader, hide confirmation if it was open
+            this.isLoading = true;
+            this.showConfirmation = false;
+            this.loadingText = 'Processing your order...';
             // create the order details        
             this.createOrder()
                 .then(orderResponse => {
+                        this.loadingText = 'Checkout in progress..';
                         // call to update the lessons spaces
                         return this.updateLessonSpaces();
                 })
                 .then(() => {
                     console.log('All lessons updated successfully');
+                    this.isLoading = false;
                     this.showOrderConfirmation();
                 })
                 .catch(error => {
                     console.error('Checkout failed:', error);
+                    this.isLoading = false;
                     console.error('Error details:', error.message);
                     alert('Checkout failed: ' + error.message);
                 });
