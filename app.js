@@ -1,12 +1,12 @@
 let lessonApp = new Vue({
     el: '#app',
     data: {
+        //imageServerBaseUrl:"http://localhost:3000/images/",
+       // serverBaseUrl: "http://localhost:3000/",
 
-        //serverBaseUrl: "https://express-lessons-api.onrender.com/",
-        serverBaseUrl: "http://localhost:3000/",
-        //imageServerBaseUrl : "https://express-lessons-api.onrender.com/images/",
-        imageServerBaseUrl:"http://localhost:3000/images/",
-
+        serverBaseUrl: "https://express-lessons-api.onrender.com/",
+        imageServerBaseUrl : "https://express-lessons-api.onrender.com/images/",
+        
         currentPage: 'home',
         isDarkMode: false,
 
